@@ -25,6 +25,9 @@ const ClientFirstFrom = () => {
   const [clientId, setClientId] = useState(id || "");
   const [isEdit, setIsEdit] = useState(false);
   const [clientData, setClientData] = useState(null);
+  const [familyDetail, setFamilyDetail] = useState(null);
+
+  
 
 
 // proposed
@@ -111,6 +114,7 @@ useEffect(()=>{
             isEdit={isEdit}
             clientData={clientData}
             onClientCreated={handleClientCreated}
+            setFamilyDetail={setFamilyDetail}
           />
         )}
         {activeTab === "family" && (
@@ -118,6 +122,8 @@ useEffect(()=>{
             clientId={clientId}
             clientData={isEdit ? clientData : null}
             onClientCreated={handleClientCreated}
+            familyDetail={familyDetail}
+             setFamilyDetail={setFamilyDetail}
           />
         )}
         {activeTab === "financial" && (
