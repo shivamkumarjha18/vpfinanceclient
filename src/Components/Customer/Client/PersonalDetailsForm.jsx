@@ -71,7 +71,7 @@ const [occupations, setOccupations] = useState([]);
   const { alldetailsForTypes } = useSelector((state) => state.OccupationType);
   const [occupationTypes, setOccupationTypes] = useState([])
 const [whatsappEdited, setWhatsappEdited] = useState(false);
-
+const [contactEdited, setcontactEdited] = useState(false);
 
   const { LeadType: leadTypes, loading } = useSelector((state) => state.LeadType);
      const { leadsourceDetail } = useSelector((state) => state.leadsource);
@@ -92,8 +92,9 @@ const handleMobileWhatsappChange = (e) => {
     let updated = { ...prev, [name]: value };
 
     // ✅ agar mobileNo complete ho (10 digit for example) aur whatsapp edit nahi hua ho
-    if (name === "mobileNo" && value.length === 10 && !whatsappEdited) {
+    if (name === "mobileNo" && value.length === 10 && !whatsappEdited  && !contactEdited) {
       updated.whatsappNo = value;
+      updated.contactNo=value;
     }
 
     return updated;
@@ -102,12 +103,17 @@ const handleMobileWhatsappChange = (e) => {
   if (name === "whatsappNo") {
     setWhatsappEdited(true);
   }
+  if(name==="contactNo"){
+    setcontactEdited(true)
+  }
 };
+
+
 
 useEffect(() => {
     const fetchOccupations = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/occupation");
+        const response = await fetch("https://vpfinance2.onrender.com/api/occupation");
         const result = await response.json();
         if (result.success) {
           setOccupations(result.data); // API se aaya data store karo
@@ -126,7 +132,7 @@ useEffect(() => {
   useEffect(() => {
     const fetchOccupationTypes = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/occupation/types");
+        const response = await fetch("https://vpfinance2.onrender.com/api/occupation/types");
         const result = await response.json();
         if (result.success) {
           setOccupationTypes(result.data); // API se aaya data store karo
@@ -163,7 +169,7 @@ useEffect(() => {
 
   const fetchAreaData = async (pincode) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/leadarea?pincode=${pincode}`);
+      const response = await fetch(`https://vpfinance2.onrender.com/api/leadarea?pincode=${pincode}`);
       const data = await response.json();
       console.log("API Response:", data);
 
@@ -453,7 +459,7 @@ useEffect(() => {
               type="text"
               placeholder="Contact No"
               value={formData.contactNo ?? ""}
-              onChange={handleChange}
+              onChange={handleMobileWhatsappChange}
               size="sm"
             />
           </Form.Group>

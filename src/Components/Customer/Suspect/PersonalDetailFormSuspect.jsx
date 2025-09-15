@@ -114,7 +114,7 @@
 
 //   const fetchAreaData = async (pincode) => {
 //     try {
-//       const response = await fetch(`http://localhost:8080/api/leadarea?pincode=${pincode}`);
+//       const response = await fetch(`https://vpfinance2.onrender.com/api/leadarea?pincode=${pincode}`);
 //       const data = await response.json();
 //       console.log("API Response:", data);
 
@@ -904,7 +904,7 @@ const PersonalDetailsFormForSuspect = ({ isEdit, suspectData, onSuspectCreated }
 
   const fetchAreaData = async (pincode) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/leadarea?pincode=${pincode}`);
+      const response = await fetch(`https://vpfinance2.onrender.com/api/leadarea?pincode=${pincode}`);
       const data = await response.json();
       console.log("API Response:", data);
 

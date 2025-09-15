@@ -22,7 +22,7 @@
 
 //     try {
 //       const res = await axios.post(
-//         "http://localhost:8080/api/uploads",
+//         "https://vpfinance2.onrender.com/api/uploads",
 //         formData,
 //         {
 //           headers: { "Content-Type": "multipart/form-data" },
@@ -79,7 +79,7 @@ const FileUpload = ({ onUpload }) => {
 
     try {
       const res = await axios.post(
-        "http://localhost:8080/api/uploads",
+        "https://vpfinance2.onrender.com/api/uploads",
         // "https://dela.systemmanager.in",
         formData,
         {

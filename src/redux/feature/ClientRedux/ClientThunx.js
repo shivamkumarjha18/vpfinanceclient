@@ -20,24 +20,6 @@ export const createClient = createAsyncThunk(
 
 
 
-
-
-// 2. Add Family Members
-// export const addFamilyMember = createAsyncThunk(
-//   'client/addFamilyMember',
-//   async ({ clientId, membersArray }, { rejectWithValue }) => {
-//     try {
-//       const response = await axios.put(`/api/client/add/family/${clientId}`, membersArray);
-//       console.log("Add family members successfully", response?.data?.clientId)
-//       return response?.data?.clientId;
-//     } catch (error) {
-//       return rejectWithValue(
-//         error?.response?.data?.error || "An error occurred while adding family members."
-//       );
-//     }
-//   }
-// );
-
 export const addFamilyMember = createAsyncThunk(
   'client/addFamilyMember',
   async ({ clientId, membersArray }, { rejectWithValue }) => {
@@ -53,21 +35,6 @@ export const addFamilyMember = createAsyncThunk(
   }
 );
 
-// export const updateFamilyMember = createAsyncThunk(
-//   'client/addFamilyMember',
-//   async ({ clientId, membersArray }, { rejectWithValue }) => {
-//     try {
-//       const response = await axios.put(`/api/client/update/family/${clientId}`, membersArray);
-//       console.log("Add family members successfully", response?.data?.clientId)
-//       return response?.data?.clientId;
-//     } catch (error) {
-//       return rejectWithValue(
-//         error?.response?.data?.error || "An error occurred while adding family members."
-//       );
-//     }
-//   }
-// );
-
 export const updateFamilyMember = createAsyncThunk(
   'client/updateFamilyMember', // Corrected action type
   async ({ clientId, membersArray }, { rejectWithValue }) => {
@@ -82,25 +49,6 @@ export const updateFamilyMember = createAsyncThunk(
     }
   }
 );
-
-
-// 3. Add Financial Information
-// export const addFinancialInfo = createAsyncThunk(
-//   'client/addFinancialInfo',
-//   async ({ clientId, financialData }, { rejectWithValue }) => {
-//     console.log(clientId,financialData);
-    
-//     try {
-//       const response = await axios.put(`/api/client/add/financialinfo/${clientId}`, financialData);
-//       console.log("Add financial info successfully", response?.data?.clientId)
-//       return response?.data?.clientId;
-//     } catch (error) {
-//       return rejectWithValue(
-//         error?.response?.data?.error || "An error occurred while adding financial info."
-//       );
-//     }
-//   }
-// );
 
 
 export const addFinancialInfo = createAsyncThunk(
@@ -197,21 +145,45 @@ export const updateFinancialInfo = createAsyncThunk(
 
 
 // 4. Add Future Priorities and Needs
+// Add
 export const addFuturePrioritiesAndNeeds = createAsyncThunk(
-  'client/addFuturePrioritiesAndNeeds',
+  "client/addFuturePrioritiesAndNeeds",
   async ({ clientId, futurePriorities, needs }, { rejectWithValue }) => {
     try {
-      console.log("Received id from future priorities", clientId)
-      const response = await axios.put(`/api/client/add/futurepriorities/${clientId}`, { futurePriorities, needs });
-      console.log("Add future priorities successfully", response?.data?.clientId)
-      return response?.data?.clientId;
+      const response = await axios.post(
+        `/api/client/add/future-priorities/${clientId}`,
+        { futurePriorities, needs }
+      );
+      return response.data;
     } catch (error) {
       return rejectWithValue(
-        error?.response?.data?.error || "An error occurred while adding future priorities and needs."
+        error?.response?.data?.error ||
+          "An error occurred while adding future priorities and needs."
       );
     }
   }
 );
+
+// Update
+export const updateFuturePrioritiesAndNeeds = createAsyncThunk(
+  "client/updateFuturePrioritiesAndNeeds",
+  async ({ clientId, futurePriorities, needs }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(
+        `/api/client/update/future-priorities/${clientId}`,
+        { futurePriorities, needs }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error?.response?.data?.error ||
+          "An error occurred while updating future priorities and needs."
+      );
+    }
+  }
+);
+
+
 
 
 

@@ -482,7 +482,7 @@
 
                             
 //                               <img
-//                                 src={`http://localhost:8080/images/${flat.descImage}`}
+//                                 src={`https://vpfinance2.onrender.com/images/${flat.descImage}`}
 //                                 alt="Uploaded"
 //                                 className=" w-[100px] max-w-sm rounded-xl shadow-md object-cover"
 //                               />
@@ -747,7 +747,7 @@
 //                                 className=" w-[5  0px] h-[20px] flex justify-center items-center p-4"
 //                               >
 //                                 <img
-//                                   src={`http://localhost:8080/images/${imgs.downloadFormUrl}`}
+//                                   src={`https://vpfinance2.onrender.com/images/${imgs.downloadFormUrl}`}
 //                                   alt="Uploaded"
 //                                   className=" w-[50px]  max-w-sm rounded-xl shadow-md object-cover"
 //                                 />
@@ -799,7 +799,7 @@
 //                                 className=" w-[5  0px] h-[20px] flex justify-center items-center p-4"
 //                               >
 //                                 <img
-//                                   src={`http://localhost:8080/images/${imgs.sampleFormUrl}`}
+//                                   src={`https://vpfinance2.onrender.com/images/${imgs.sampleFormUrl}`}
 //                                   alt="Uploaded"
 //                                   className=" w-[50px]  max-w-sm rounded-xl shadow-md object-cover"
 //                                 />
@@ -1387,7 +1387,7 @@ const Addtask = ({ on, data, onSuccess }) => {
 
                             
                               <img
-                                src={`http://localhost:8080/images/${flat.descImage}`}
+                                src={`https://vpfinance2.onrender.com/images/${flat.descImage}`}
                                 alt="Uploaded"
                                 className=" w-[100px] max-w-sm rounded-xl shadow-md object-cover"
                                 width={500} 
@@ -1653,7 +1653,7 @@ const Addtask = ({ on, data, onSuccess }) => {
                                 className=" w-[5  0px] h-[20px] flex justify-center items-center p-4"
                               >
                                 <img
-                                  src={`http://localhost:8080/images/${imgs.downloadFormUrl}`}
+                                  src={`https://vpfinance2.onrender.com/images/${imgs.downloadFormUrl}`}
                                   alt="Uploaded"
                                   className=" w-[50px]  max-w-sm rounded-xl shadow-md object-cover"
                                 />
@@ -1705,7 +1705,7 @@ const Addtask = ({ on, data, onSuccess }) => {
                                 className=" w-[5  0px] h-[20px] flex justify-center items-center p-4"
                               >
                                 <img
-                                  src={`http://localhost:8080/images/${imgs.sampleFormUrl}`}
+                                  src={`https://vpfinance2.onrender.com/images/${imgs.sampleFormUrl}`}
                                   alt="Uploaded"
                                   className=" w-[50px]  max-w-sm rounded-xl shadow-md object-cover"
                                 />
@@ -1853,7 +1853,7 @@ const Addtask = ({ on, data, onSuccess }) => {
                    !editDownloadImage ? (
                     <div className="d-flex align-items-center">
                       <img
-                        src={`http://localhost:8080/images/${item.downloadFormUrl}`}
+                        src={`https://vpfinance2.onrender.com/images/${item.downloadFormUrl}`}
                         alt="Blank Form"
                         className="img-thumbnail me-2"
                         style={{ width: "50px", height: "50px", objectFit: "cover" }}
@@ -1916,7 +1916,7 @@ const Addtask = ({ on, data, onSuccess }) => {
                    !editDownloadSampleImage ? (
                     <div className="d-flex align-items-center">
                       <img
-                        src={`http://localhost:8080/images/${item.sampleFormUrl}`}
+                        src={`https://vpfinance2.onrender.com/images/${item.sampleFormUrl}`}
                         alt="Sample Form"
                         className="img-thumbnail me-2"
                         style={{ width: "50px", height: "50px", objectFit: "cover" }}

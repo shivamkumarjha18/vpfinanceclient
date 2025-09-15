@@ -347,7 +347,7 @@ const CustomerDetail = () => {
     <img
       src={
         userData?.personalDetails?.profilepic
-          ? `http://localhost:8080${userData.personalDetails.profilepic}`
+          ? `https://vpfinance2.onrender.com${userData.personalDetails.profilepic}`
           : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQf1fiSQO7JfDw0uv1Ae_Ye-Bo9nhGNg27dwg&s"
       }
       alt="Profile"
