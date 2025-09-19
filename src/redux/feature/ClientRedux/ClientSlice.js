@@ -5,10 +5,12 @@ import {
   addFamilyMember,
   addFinancialInfo,
   addFuturePrioritiesAndNeeds,
+  updateFuturePrioritiesAndNeeds,
   addProposedFinancialPlan,
   updateProposedStatus,
   getAllClients,
   getClientById,
+  updateProposedFinancialPlan,
   updateCleintStatus,
   updateClientPersonalDetails,
   deleteClientById,
@@ -225,6 +227,36 @@ const clientSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+            // updateFuturePrioritiesAndNeeds
+      .addCase(updateFuturePrioritiesAndNeeds.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(updateFuturePrioritiesAndNeeds.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.futurePriorities = action.payload;
+      })
+      .addCase(updateFuturePrioritiesAndNeeds.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+          .addCase(updateProposedFinancialPlan.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(updateProposedFinancialPlan.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.futurePriorities = action.payload;
+      })
+      .addCase(updateProposedFinancialPlan.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
   },
 });
 

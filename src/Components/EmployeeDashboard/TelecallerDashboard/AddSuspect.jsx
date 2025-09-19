@@ -28,7 +28,7 @@ const gradeMap = {
   "2.5 to 5 lakh": 3,
 };
 
-const PersonalDetailsFormForSuspect = ({ isEdit, suspectData, onSuspectCreated }) => {
+const AddSuspect = ({ isEdit, suspectData, onSuspectCreated }) => {
   const dispatch = useDispatch();
   const initialFormState = {
     salutation: "",
@@ -661,4 +661,4 @@ const PersonalDetailsFormForSuspect = ({ isEdit, suspectData, onSuspectCreated }
   );
 };
 
-export default PersonalDetailsFormForSuspect;
+export default AddSuspect;

@@ -184,29 +184,70 @@ export const updateFuturePrioritiesAndNeeds = createAsyncThunk(
 );
 
 
-
-
-
-
-// 5. Add Proposed Financial Plan
 export const addProposedFinancialPlan = createAsyncThunk(
-  'client/addProposedFinancialPlan',
+  "client/addProposedFinancialPlan",
   async ({ clientId, formData }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(`/api/client/add/proposedplan/${clientId}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      console.log("Add proposed plan successfully", response?.data);
-      return response?.data;
+      const response = await axios.post(
+        `/api/client/add/proposed-plan/${clientId}`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      return response.data;
     } catch (error) {
       return rejectWithValue(
-        error?.response?.data?.message || error?.response?.data?.error || "An error occurred while adding the proposed financial plan."
+        error?.response?.data?.error ||
+          "An error occurred while adding proposed financial plan."
       );
     }
   }
 );
+
+// ✅ Update Proposed Plan
+export const updateProposedFinancialPlan = createAsyncThunk(
+  "client/updateProposedFinancialPlan",
+  async ({ clientId, planId, formData }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(
+        `/api/client/update/proposed-plan/${clientId}/${planId}`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error?.response?.data?.error ||
+          "An error occurred while updating proposed financial plan."
+      );
+    }
+  }
+);
+
+
+
+// 5. Add Proposed Financial Plan
+// export const addProposedFinancialPlan = createAsyncThunk(
+//   'client/addProposedFinancialPlan',
+//   async ({ clientId, formData }, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.put(`/api/client/add/proposedplan/${clientId}`, formData, {
+//         headers: {
+//           'Content-Type': 'multipart/form-data',
+//         },
+//       });
+//       console.log("Add proposed plan successfully", response?.data);
+//       return response?.data;
+//     } catch (error) {
+//       return rejectWithValue(
+//         error?.response?.data?.message || error?.response?.data?.error || "An error occurred while adding the proposed financial plan."
+//       );
+//     }
+//   }
+// );
 
 
 // update Proposed status

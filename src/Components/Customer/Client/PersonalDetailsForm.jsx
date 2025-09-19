@@ -307,11 +307,11 @@ useEffect(() => {
         </Col>
         <Col md={5}>
           <Form.Group controlId="groupName">
-            <Form.Label>Group Head</Form.Label>
+            <Form.Label>Family Head</Form.Label>
             <Form.Control
               name="groupName"
               type="text"
-              placeholder="Group Head"
+              placeholder="Family Head"
               value={formData.groupName ?? ""}
               onChange={handleChange}
               size="sm"

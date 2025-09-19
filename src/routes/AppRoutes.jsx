@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Layout from "../Layout/Layout";
 import DashboardCards from "../Components/Dashbord/DashboardCards";
-
+import AppointmentComponent from "../Components/EmployeeDashboard/TelecallerDashboard/Appointment";
 // Master Components
 import Composite from "../Components/Masters/Composite/Composite";
 import Area from "../Components/Masters/Leads/Area";
@@ -43,10 +43,32 @@ import AMCtabs from "../Components/Offices/Mutual Funds/AMC/AMCtabs";
 import OfficeDiaryTabs from "../Components/Offices/OfficeRecord/Office Diary/OfficeDiaryTabs";
 import OfficePurchase from "../Components/Offices/Other/OfficePurchase";
 import ImpDocument from "../Components/Offices/Other/ImportantDocument/ImpDocument";
+import Registertelecaller from "../pages/telecaller/Register";
+import TelecallerPanel from "../Components/EmployeeDashboard/TelecallerDashboard/telecallerDashboard"; 
+import LoginTelecaller from "../pages/telecaller/login";
+import Registertelemarketer from "../pages/telemarketer/Register";
+import RegisterOE from "../pages/OE/Register";
+import RegisterOA from "../pages/OA/Register";
+import RegisterHR from "../pages/HR/Register";
+import LoginOE from "../pages/OE/Login";
+import LoginOA from "../pages/OA/Login";
+import LoginHR from "../pages/HR/Login";
+import LoginTelemarketer from "../pages/telemarketer/Login";
+import Login from "../pages/COMMONLOGIN/Login";
+import AddSuspect from "../Components/EmployeeDashboard/TelecallerDashboard/AddSuspect";
+import DashboardPage from "../Components/EmployeeDashboard/TelecallerDashboard/Dashboard";
 
 const AppRoutes = () => {
   return (
     <Routes>
+       
+      <Route path="/telecaller" element={<TelecallerPanel />}>
+    <Route path="dashboard" element={<DashboardPage />} />
+    <Route path="suspect/add" element={<AddSuspect />} />
+     <Route path="appointments" element={<AppointmentComponent/>} />
+  </Route>
+    
+       {/* <Route path="/telecaller/dashboard" element={<TelecallerPanel/>} />  */}
       <Route path="/" element={<Layout />}>
         <Route index element={<DashboardCards />} />
 
@@ -103,6 +125,22 @@ const AppRoutes = () => {
         <Route path="/office-diary" element={<OfficeDiaryTabs />} />
         <Route path="/office-purchase" element={<OfficePurchase />} />
         <Route path="/important-documents" element={<ImpDocument />} />
+
+        {/* telecaller */}
+   <Route path="/telecaller/register" element={<Registertelecaller/>} />
+      <Route path="/telemarketer/register" element={<Registertelemarketer/>} />
+        <Route path="/telemarketer/login" element={<LoginTelemarketer/>} />
+          <Route path="/OE/register" element={<RegisterOE/>} />
+            <Route path="/OE/login" element={<LoginOE/>} />
+          <Route path="/OA/register" element={<RegisterOA/>} />
+            <Route path="/OA/login" element={<LoginOA/>} />
+             <Route path="/HR/register" element={<RegisterHR/>} />
+                <Route path="/HR/login" element={<LoginHR/>} />
+        <Route path="/telecaller/login" element={<LoginTelecaller/>} />
+   <Route path="/auth/login" element={<Login/>} />
+     
+
+
       </Route>
     </Routes>
   );

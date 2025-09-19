@@ -21,10 +21,20 @@ import LeadCityReducer from "./feature/LeadCity/CitySlice";
 import clientReducer from "./feature/ClientRedux/ClientSlice";
 import KycReducer from "./feature/ClientRedux/KycSlice";
 import documentSliceReducer from "./feature/kycdocument/documentslice"
-
-
+import  telecallerReducer from "./feature/telecaller/telecallerSlice"
+import telemarketerReducer from  "./feature/telemarketer/telemarketerSlice"
+import OEReducer from  "./feature/OE/OESlice"
+import OAReducer from  "./feature/OA/OASlice"
+import HRReducer from  "./feature/HR/HRSlice"
+import authReducer from "./feature/auth/authSlice"
 export const store = configureStore({
   reducer: {
+  telecaller: telecallerReducer,
+  telemarketer:telemarketerReducer,
+  OE:OEReducer,
+  OA:OAReducer,
+  HR:HRReducer,
+auth:authReducer,
     leadsource: leadSourceReducer,
     leadOccupation: LeadOccupationReducer,
     OccupationType: OccupationTypeReducer,
