@@ -6,6 +6,7 @@ import { fetchDetails } from "../../../redux/feature/LeadSource/LeadThunx";
 import { getAllOccupations } from "../../../redux/feature/LeadOccupation/OccupationThunx";
 import { getAllOccupationTypes } from "../../../redux/feature/OccupationType/OccupationThunx";
 import { toast } from "react-toastify";
+import { getAllSuspects } from "../../../redux/feature/SuspectRedux/SuspectThunx";
 
 // Debounce function to limit API calls
 const debounce = (func, delay) => {
@@ -27,6 +28,8 @@ const gradeMap = {
   "5 to 25 lakh": 2,
   "2.5 to 5 lakh": 3,
 };
+
+
 
 const AddSuspect = ({ isEdit, suspectData, onSuspectCreated }) => {
   const dispatch = useDispatch();
@@ -63,14 +66,23 @@ const AddSuspect = ({ isEdit, suspectData, onSuspectCreated }) => {
   };
 
   const [formData, setFormData] = useState(initialFormState);
+  const [callSummary, setCallSummary] = useState({
+    callStatus: "",
+    remark: "",
+    nextCallDate: "",
+    time: "",
+  });
+
   const { leadsourceDetail } = useSelector((state) => state.leadsource);
   const { alldetails } = useSelector((state) => state.leadOccupation);
   const { alldetailsForTypes } = useSelector((state) => state.OccupationType);
+  const { suspects } = useSelector((state) => state.suspect);
 
   useEffect(() => {
     dispatch(fetchDetails());
     dispatch(getAllOccupationTypes());
     dispatch(getAllOccupations());
+    dispatch(getAllSuspects());
   }, [dispatch]);
 
   useEffect(() => {
@@ -163,6 +175,11 @@ const AddSuspect = ({ isEdit, suspectData, onSuspectCreated }) => {
     }));
   };
 
+  const handleCallSummaryChange = (e) => {
+    const { name, value } = e.target;
+    setCallSummary((prev) => ({ ...prev, [name]: value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isEdit && suspectData?._id) {
@@ -184,480 +201,564 @@ const AddSuspect = ({ isEdit, suspectData, onSuspectCreated }) => {
     }
   };
 
+  const handleCallSummarySubmit = (e) => {
+    e.preventDefault();
+    console.log("Call Summary:", callSummary);
+    // Add API call or dispatch action to save call summary
+  };
+
   return (
-    <Form onSubmit={handleSubmit}>
-      <Row className="mb-4">
-        <Col md={2}>
-          <Form.Group controlId="salutation">
-            <Form.Label>Salutation</Form.Label>
-            <Form.Select
-              name="salutation"
-              value={formData.salutation ?? ""}
-              onChange={handleChange}
-              size="sm"
-            >
-              <option value="">Select</option>
-              <option>Mr.</option>
-              <option>Mrs.</option>
-              <option>Ms.</option>
-              <option>Mast.</option>
-              <option>Shri.</option>
-              <option>Smt.</option>
-              <option>Kum.</option>
-              <option>Kr.</option>
-              <option>Dr.</option>
-            </Form.Select>
-          </Form.Group>
-        </Col>
-        <Col md={5}>
-          <Form.Group controlId="groupName">
-            <Form.Label>Family Head</Form.Label>
-            <Form.Control
-              name="groupName"
-              type="text"
-              placeholder="Family Head"
-              value={formData.groupName ?? ""}
-              onChange={handleChange}
-              size="sm"
+    <div>
+      <Form onSubmit={handleSubmit}>
+        <Row className="mb-4">
+          <Col md={2}>
+            <Form.Group controlId="salutation">
+              <Form.Label>Salutation</Form.Label>
+              <Form.Select
+                name="salutation"
+                value={formData.salutation ?? ""}
+                onChange={handleChange}
+                size="sm"
+              >
+                <option value="">Select</option>
+                <option>Mr.</option>
+                <option>Mrs.</option>
+                <option>Ms.</option>
+                <option>Mast.</option>
+                <option>Shri.</option>
+                <option>Smt.</option>
+                <option>Kum.</option>
+                <option>Kr.</option>
+                <option>Dr.</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+          <Col md={5}>
+            <Form.Group controlId="groupName">
+              <Form.Label>Family Head</Form.Label>
+              <Form.Control
+                name="groupName"
+                type="text"
+                placeholder="Family Head"
+                value={formData.groupName ?? ""}
+                onChange={handleChange}
+                size="sm"
+              />
+            </Form.Group>
+          </Col>
+          <Col md={3}>
+            <Form.Group controlId="gender">
+              <Form.Label>Gender</Form.Label>
+              <Form.Select
+                name="gender"
+                value={formData.gender ?? ""}
+                onChange={handleChange}
+                size="sm"
+              >
+                <option value="">Select</option>
+                <option>Male</option>
+                <option>Female</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+        </Row>
+
+        <Row className="mb-4">
+          <Col md={4}>
+            <Form.Group controlId="organisation">
+              <Form.Label>Organisation</Form.Label>
+              <Form.Control
+                name="organisation"
+                type="text"
+                placeholder="Organisation"
+                value={formData.organisation ?? ""}
+                onChange={handleChange}
+                size="sm"
+              />
+            </Form.Group>
+          </Col>
+          <Col md={4}>
+            <Form.Group controlId="designation">
+              <Form.Label>Designation</Form.Label>
+              <Form.Control
+                name="designation"
+                type="text"
+                placeholder="Designation"
+                value={formData.designation ?? ""}
+                onChange={handleChange}
+                size="sm"
+              />
+            </Form.Group>
+          </Col>
+          <Col md={3}>
+            <Form.Group controlId="annualIncome">
+              <Form.Label style={{ color: "#00008B" }} className="fw-medium">
+                Annual Income
+              </Form.Label>
+              <Form.Select
+                name="annualIncome"
+                value={formData.annualIncome ?? ""}
+                onChange={handleChange}
+                size="sm"
+              >
+                <option value="">-- Select --</option>
+                {incomeOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+          </Col>
+          <Col md={1}>
+            <Form.Group controlId="grade">
+              <Form.Label style={{ color: "#00008B" }} className="fw-medium">
+                Grade
+              </Form.Label>
+              <Form.Control
+                type="text"
+                name="grade"
+                value={formData.grade ?? ""}
+                size="sm"
+                readOnly
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+
+        <Row className="mb-4">
+          <Col md={3}>
+            <Form.Group controlId="mobileNo">
+              <Form.Label>Mobile No</Form.Label>
+              <Form.Control
+                name="mobileNo"
+                type="text"
+                placeholder="Mobile No"
+                value={formData.mobileNo ?? ""}
+                onChange={handleChange}
+                size="sm"
+              />
+            </Form.Group>
+          </Col>
+          <Col md={3}>
+            <Form.Group controlId="whatsappNo">
+              <Form.Label>Whatsapp No</Form.Label>
+              <Form.Control
+                name="whatsappNo"
+                type="text"
+                placeholder="Whatsapp No"
+                value={formData.whatsappNo ?? ""}
+                onChange={handleChange}
+                size="sm"
+              />
+            </Form.Group>
+          </Col>
+          <Col md={3}>
+            <Form.Group controlId="contactNo">
+              <Form.Label>Contact No</Form.Label>
+              <Form.Control
+                name="contactNo"
+                type="text"
+                placeholder="Contact No"
+                value={formData.contactNo ?? ""}
+                onChange={handleChange}
+                size="sm"
+              />
+            </Form.Group>
+          </Col>
+          <Col md={3}>
+            <Form.Group controlId="emailId">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                name="emailId"
+                type="email"
+                placeholder="Email"
+                value={formData.emailId ?? ""}
+                onChange={handleChange}
+                size="sm"
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+
+        <Row className="mb-4">
+          <Col md={3}>
+            <Form.Group controlId="dob">
+              <Form.Label>DOB</Form.Label>
+              <Form.Control
+                name="dob"
+                type="date"
+                placeholder="dd-mm-yyyy"
+                value={formData.dob ?? ""}
+                onChange={handleChange}
+                size="sm"
+              />
+            </Form.Group>
+          </Col>
+          <Col md={3}>
+            <Form.Group controlId="dom">
+              <Form.Label>DOM</Form.Label>
+              <Form.Control
+                name="dom"
+                type="date"
+                placeholder="dd-mm-yyyy"
+                value={formData.dom ?? ""}
+                onChange={handleChange}
+                size="sm"
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+
+        <Row className="mb-4">
+          <Col md={1} className="mt-2">
+            <Form.Check
+              type="radio"
+              label="Residential"
+              name="preferredAddressType"
+              checked={formData.preferredAddressType === "resi"}
+              onChange={() => handleAddressTypeChange("resi")}
             />
-          </Form.Group>
-        </Col>
-        <Col md={3}>
-          <Form.Group controlId="gender">
-            <Form.Label>Gender</Form.Label>
-            <Form.Select
-              name="gender"
-              value={formData.gender ?? ""}
-              onChange={handleChange}
-              size="sm"
-            >
-              <option value="">Select</option>
-              <option>Male</option>
-              <option>Female</option>
-            </Form.Select>
-          </Form.Group>
-        </Col>
-      </Row>
-      <Row className="mb-4">
-        <Col md={4}>
-          <Form.Group controlId="organisation">
-            <Form.Label>Organisation</Form.Label>
-            <Form.Control
-              name="organisation"
-              type="text"
-              placeholder="Organisation"
-              value={formData.organisation ?? ""}
-              onChange={handleChange}
-              size="sm"
+          </Col>
+          <Col md={6}>
+            <Form.Group controlId="resiAddr">
+              <Form.Label>Resi. Address</Form.Label>
+              <Form.Control
+                name="resiAddr"
+                type="text"
+                placeholder="Residential Address"
+                value={formData.resiAddr ?? ""}
+                onChange={handleChange}
+                size="sm"
+              />
+            </Form.Group>
+          </Col>
+          <Col md={3}>
+            <Form.Group controlId="resiLandmark">
+              <Form.Label>Resi. Landmark</Form.Label>
+              <Form.Control
+                name="resiLandmark"
+                type="text"
+                placeholder="Residential Landmark"
+                value={formData.resiLandmark ?? ""}
+                onChange={handleChange}
+                size="sm"
+              />
+            </Form.Group>
+          </Col>
+          <Col md={2}>
+            <Form.Group controlId="resiPincode">
+              <Form.Label>Pin Code</Form.Label>
+              <Form.Control
+                name="resiPincode"
+                type="text"
+                placeholder="Residential Pincode"
+                value={formData.resiPincode ?? ""}
+                onChange={handleChange}
+                size="sm"
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+
+        <Row className="mb-4">
+          <Col md={1} className="mt-2">
+            <Form.Check
+              type="radio"
+              label="Office"
+              name="preferredAddressType"
+              checked={formData.preferredAddressType === "office"}
+              onChange={() => handleAddressTypeChange("office")}
             />
-          </Form.Group>
-        </Col>
-        <Col md={4}>
-          <Form.Group controlId="designation">
-            <Form.Label>Designation</Form.Label>
-            <Form.Control
-              name="designation"
-              type="text"
-              placeholder="Designation"
-              value={formData.designation ?? ""}
-              onChange={handleChange}
-              size="sm"
-            />
-          </Form.Group>
-        </Col>
-        <Col md={3}>
-          <Form.Group controlId="annualIncome">
-            <Form.Label style={{ color: "#00008B" }} className="fw-medium">
-              Annual Income
-            </Form.Label>
-            <Form.Select
-              name="annualIncome"
-              value={formData.annualIncome ?? ""}
-              onChange={handleChange}
-              size="sm"
-            >
-              <option value="">-- Select --</option>
-              {incomeOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-        </Col>
-        <Col md={1}>
-          <Form.Group controlId="grade">
-            <Form.Label style={{ color: "#00008B" }} className="fw-medium">
-              Grade
-            </Form.Label>
-            <Form.Control
-              type="text"
-              name="grade"
-              value={formData.grade ?? ""}
-              size="sm"
-              readOnly
-            />
-          </Form.Group>
-        </Col>
-      </Row>
-      <Row className="mb-4">
-        <Col md={3}>
-          <Form.Group controlId="mobileNo">
-            <Form.Label>Mobile No</Form.Label>
-            <Form.Control
-              name="mobileNo"
-              type="text"
-              placeholder="Mobile No"
-              value={formData.mobileNo ?? ""}
-              onChange={handleChange}
-              size="sm"
-            />
-          </Form.Group>
-        </Col>
-        <Col md={3}>
-          <Form.Group controlId="whatsappNo">
-            <Form.Label>Whatsapp No</Form.Label>
-            <Form.Control
-              name="whatsappNo"
-              type="text"
-              placeholder="Whatsapp No"
-              value={formData.whatsappNo ?? ""}
-              onChange={handleChange}
-              size="sm"
-            />
-          </Form.Group>
-        </Col>
-        <Col md={3}>
-          <Form.Group controlId="contactNo">
-            <Form.Label>Contact No</Form.Label>
-            <Form.Control
-              name="contactNo"
-              type="text"
-              placeholder="Contact No"
-              value={formData.contactNo ?? ""}
-              onChange={handleChange}
-              size="sm"
-            />
-          </Form.Group>
-        </Col>
-        <Col md={3}>
-          <Form.Group controlId="emailId">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              name="emailId"
-              type="email"
-              placeholder="Email"
-              value={formData.emailId ?? ""}
-              onChange={handleChange}
-              size="sm"
-            />
-          </Form.Group>
-        </Col>
-      </Row>
-      <Row className="mb-4">
-        <Col md={3}>
-          <Form.Group controlId="dob">
-            <Form.Label>DOB</Form.Label>
-            <Form.Control
-              name="dob"
-              type="date"
-              placeholder="dd-mm-yyyy"
-              value={formData.dob ?? ""}
-              onChange={handleChange}
-              size="sm"
-            />
-          </Form.Group>
-        </Col>
-        <Col md={3}>
-          <Form.Group controlId="dom">
-            <Form.Label>DOM</Form.Label>
-            <Form.Control
-              name="dom"
-              type="date"
-              placeholder="dd-mm-yyyy"
-              value={formData.dom ?? ""}
-              onChange={handleChange}
-              size="sm"
-            />
-          </Form.Group>
-        </Col>
-      </Row>
-      <Row className="mb-4">
-        <Col md={1} className="mt-2">
-          <Form.Check
-            type="radio"
-            label="Residential"
-            name="preferredAddressType"
-            checked={formData.preferredAddressType === "resi"}
-            onChange={() => handleAddressTypeChange("resi")}
-          />
-        </Col>
-        <Col md={6}>
-          <Form.Group controlId="resiAddr">
-            <Form.Label>Resi. Address</Form.Label>
-            <Form.Control
-              name="resiAddr"
-              type="text"
-              placeholder="Residential Address"
-              value={formData.resiAddr ?? ""}
-              onChange={handleChange}
-              size="sm"
-            />
-          </Form.Group>
-        </Col>
-        <Col md={3}>
-          <Form.Group controlId="resiLandmark">
-            <Form.Label>Resi. Landmark</Form.Label>
-            <Form.Control
-              name="resiLandmark"
-              type="text"
-              placeholder="Residential Landmark"
-              value={formData.resiLandmark ?? ""}
-              onChange={handleChange}
-              size="sm"
-            />
-          </Form.Group>
-        </Col>
-        <Col md={2}>
-          <Form.Group controlId="resiPincode">
-            <Form.Label>Pin Code</Form.Label>
-            <Form.Control
-              name="resiPincode"
-              type="text"
-              placeholder="Residential Pincode"
-              value={formData.resiPincode ?? ""}
-              onChange={handleChange}
-              size="sm"
-            />
-          </Form.Group>
-        </Col>
-      </Row>
-      <Row className="mb-4">
-        <Col md={1} className="mt-2">
-          <Form.Check
-            type="radio"
-            label="Office"
-            name="preferredAddressType"
-            checked={formData.preferredAddressType === "office"}
-            onChange={() => handleAddressTypeChange("office")}
-          />
-        </Col>
-        <Col md={6}>
-          <Form.Group controlId="officeAddr">
-            <Form.Label>Off. Address</Form.Label>
-            <Form.Control
-              name="officeAddr"
-              type="text"
-              placeholder="Office Address"
-              value={formData.officeAddr ?? ""}
-              onChange={handleChange}
-              size="sm"
-            />
-          </Form.Group>
-        </Col>
-        <Col md={3}>
-          <Form.Group controlId="officeLandmark">
-            <Form.Label>Off. Landmark</Form.Label>
-            <Form.Control
-              name="officeLandmark"
-              type="text"
-              placeholder="Office Landmark"
-              value={formData.officeLandmark ?? ""}
-              onChange={handleChange}
-              size="sm"
-            />
-          </Form.Group>
-        </Col>
-        <Col md={2}>
-          <Form.Group controlId="officePincode">
-            <Form.Label>Pincode</Form.Label>
-            <Form.Control
-              name="officePincode"
-              type="text"
-              placeholder="Office Pincode"
-              value={formData.officePincode ?? ""}
-              onChange={handleChange}
-              size="sm"
-            />
-          </Form.Group>
-        </Col>
-      </Row>
-      <Row className="mb-4">
-        <Col md={5}>
-          <Form.Group controlId="preferredMeetingAddr">
-            <Form.Label>Preferred Meeting Address</Form.Label>
-            <Form.Control
-              name="preferredMeetingAddr"
-              type="text"
-              placeholder="Preferred Meeting Address"
-              value={formData.preferredMeetingAddr ?? ""}
-              onChange={handleChange}
-              size="sm"
-              readOnly
-            />
-          </Form.Group>
-        </Col>
-        <Col md={2}>
-          <Form.Group controlId="preferredMeetingArea">
-            <Form.Label>Area</Form.Label>
-            <Form.Control
-              name="preferredMeetingArea"
-              type="text"
-              placeholder="Preferred Meeting Area"
-              value={formData.preferredMeetingArea ?? ""}
-              onChange={handleChange}
-              size="sm"
-              readOnly
-            />
-          </Form.Group>
-        </Col>
-        <Col md={2}>
-          <Form.Group controlId="city">
-            <Form.Label>City</Form.Label>
-            <Form.Control
-              name="city"
-              type="text"
-              placeholder="City"
-              value={formData.city ?? ""}
-              onChange={handleChange}
-              size="sm"
-              readOnly
-            />
-          </Form.Group>
-        </Col>
-      </Row>
-      <Row className="mb-4">
-        <Col md={3}>
-          <Form.Group controlId="leadSource">
-            <Form.Label>Lead Source</Form.Label>
-            <Form.Select
-              name="leadSource"
-              value={formData.leadSource ?? ""}
-              onChange={handleChange}
-              size="sm"
-            >
-              <option value="">Select Lead Source</option>
-              <option value="Referred">Referred</option>
-              <option value="Digital Platform">Digital Platform</option>
-              <option value="Employee">Employee</option>
-              <option value="Business Associate">Business Associate</option>
-              <option value="Internship">Internship</option>
-              <option value="Direct">Direct</option>
-            </Form.Select>
-          </Form.Group>
-        </Col>
-        <Col md={3}>
-          <Form.Group controlId="leadName">
-            <Form.Label>Lead Name</Form.Label>
-            <Form.Control
-              name="leadName"
-              type="text"
-              placeholder="Lead Name"
-              value={formData.leadName ?? ""}
-              onChange={handleChange}
-              size="sm"
-            />
-          </Form.Group>
-        </Col>
-        <Col md={3}>
-          <Form.Group controlId="leadOccupation">
-            <Form.Label>Lead Occupation</Form.Label>
-            <Form.Select
-              name="leadOccupation"
-              value={formData.leadOccupation ?? ""}
-              onChange={handleChange}
-              size="sm"
-            >
-              <option value="">Select Lead Occupation</option>
-              <option value="Businessman">Businessman</option>
-              <option value="Govt.Service">Govt.Service</option>
-              <option value="Private Service">Private Service</option>
-              <option value="Retired">Retired</option>
-            </Form.Select>
-          </Form.Group>
-        </Col>
-        <Col md={3}>
-          <Form.Group controlId="leadOccupationType">
-            <Form.Label>Occupation Type</Form.Label>
-            <Form.Select
-              name="leadOccupationType"
-              value={formData.leadOccupationType ?? ""}
-              onChange={handleChange}
-              size="sm"
-            >
-              <option value="">Select Occupation Type</option>
-              <option value="CA">CA</option>
-              <option value="Jwellars">Jwellars</option>
-              <option value="Iron Merchant">Iron Merchant</option>
-              <option value="Kirana Merchant">Kirana Merchant</option>
-              <option value="Sugar Tredars">Sugar Tredars</option>
-              <option value="Cloth Merchant">Cloth Merchant</option>
-              <option value="Whole Sale Stationary">Whole Sale Stationary</option>
-              <option value="Tent & Lighte">Tent & Lighte</option>
-              <option value="Pan Masala Merchant">Pan Masala Merchant</option>
-              <option value="Bartan Merchant">Bartan Merchant</option>
-              <option value="Paper Traders">Paper Traders</option>
-              <option value="Restorent Ownar">Restorent Ownar</option>
-              <option value="Hotel Ownar">Hotel Ownar</option>
-              <option value="Electronics Shop Owner">Electronics Shop Owner</option>
-              <option value="Electricals Shop Owner">Electricals Shop Owner</option>
-              <option value="Tyre Dealers">Tyre Dealers</option>
-              <option value="Tea Merchents">Tea Merchents</option>
-              <option value="Whole Sale Medical Shop">Whole Sale Medical Shop</option>
-              <option value="Automobile Dealears">Automobile Dealears</option>
-              <option value="Cycle Dealers">Cycle Dealers</option>
-              <option value="Transportars">Transportars</option>
-              <option value="Retail Cloth Merchant">Retail Cloth Merchant</option>
-              <option value="Bangle Merchant">Bangle Merchant</option>
-              <option value="Book Salears">Book Salears</option>
-              <option value="Grain & Oil Seads Merchant">Grain & Oil Seads Merchant</option>
-              <option value="Oil & Ghee Merchant">Oil & Ghee Merchant</option>
-              <option value="Doctors">Doctors</option>
-              <option value="PVT.Service">PVT.Service</option>
-              <option value="Retired">Retired</option>
-              <option value="Industrialist">Industrialist</option>
-              <option value="Teacher">Teacher</option>
-            </Form.Select>
-          </Form.Group>
-        </Col>
-      </Row>
-      <Row className="mb-4">
-        <Col md={4}>
-          <Form.Group controlId="callingPurpose">
-            <Form.Label>Calling Purpose</Form.Label>
-            <Form.Select
-              name="callingPurpose"
-              value={formData.callingPurpose ?? ""}
-              onChange={handleChange}
-              size="sm"
-            >
-              <option value="">-- Select Purpose --</option>
-              <option value="Follow-up">Follow-up</option>
-              <option value="Meeting Schedule">Meeting Schedule</option>
-              <option value="Query Resolution">Query Resolution</option>
-              <option value="Proposal Discussion">Proposal Discussion</option>
-              <option value="Other">Other</option>
-            </Form.Select>
-          </Form.Group>
-        </Col>
-        <Col md={4}>
-          <Form.Group controlId="name">
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              name="name"
-              type="text"
-              placeholder="Name"
-              value={formData.name ?? ""}
-              onChange={handleChange}
-              size="sm"
-            />
-          </Form.Group>
-        </Col>
-      </Row>
-      <Button type="submit" className="btn btn-primary">
-        {isEdit && suspectData?._id ? "Update" : "Submit Lead"}
-      </Button>
-    </Form>
+          </Col>
+          <Col md={6}>
+            <Form.Group controlId="officeAddr">
+              <Form.Label>Off. Address</Form.Label>
+              <Form.Control
+                name="officeAddr"
+                type="text"
+                placeholder="Office Address"
+                value={formData.officeAddr ?? ""}
+                onChange={handleChange}
+                size="sm"
+              />
+            </Form.Group>
+          </Col>
+          <Col md={3}>
+            <Form.Group controlId="officeLandmark">
+              <Form.Label>Off. Landmark</Form.Label>
+              <Form.Control
+                name="officeLandmark"
+                type="text"
+                placeholder="Office Landmark"
+                value={formData.officeLandmark ?? ""}
+                onChange={handleChange}
+                size="sm"
+              />
+            </Form.Group>
+          </Col>
+          <Col md={2}>
+            <Form.Group controlId="officePincode">
+              <Form.Label>Pincode</Form.Label>
+              <Form.Control
+                name="officePincode"
+                type="text"
+                placeholder="Office Pincode"
+                value={formData.officePincode ?? ""}
+                onChange={handleChange}
+                size="sm"
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+
+        <Row className="mb-4">
+          <Col md={5}>
+            <Form.Group controlId="preferredMeetingAddr">
+              <Form.Label>Preferred Meeting Address</Form.Label>
+              <Form.Control
+                name="preferredMeetingAddr"
+                type="text"
+                placeholder="Preferred Meeting Address"
+                value={formData.preferredMeetingAddr ?? ""}
+                onChange={handleChange}
+                size="sm"
+                readOnly
+              />
+            </Form.Group>
+          </Col>
+          <Col md={2}>
+            <Form.Group controlId="preferredMeetingArea">
+              <Form.Label>Area</Form.Label>
+              <Form.Control
+                name="preferredMeetingArea"
+                type="text"
+                placeholder="Preferred Meeting Area"
+                value={formData.preferredMeetingArea ?? ""}
+                onChange={handleChange}
+                size="sm"
+                readOnly
+              />
+            </Form.Group>
+          </Col>
+          <Col md={2}>
+            <Form.Group controlId="city">
+              <Form.Label>City</Form.Label>
+              <Form.Control
+                name="city"
+                type="text"
+                placeholder="City"
+                value={formData.city ?? ""}
+                onChange={handleChange}
+                size="sm"
+                readOnly
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+
+        <Row className="mb-4">
+          <Col md={3}>
+            <Form.Group controlId="leadSource">
+              <Form.Label>Lead Source</Form.Label>
+              <Form.Select
+                name="leadSource"
+                value={formData.leadSource ?? ""}
+                onChange={handleChange}
+                size="sm"
+              >
+                <option value="">Select Lead Source</option>
+                <option value="Referred">Referred</option>
+                <option value="Digital Platform">Digital Platform</option>
+                <option value="Employee">Employee</option>
+                <option value="Business Associate">Business Associate</option>
+                <option value="Internship">Internship</option>
+                <option value="Direct">Direct</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+          <Col md={3}>
+            <Form.Group controlId="leadName">
+              <Form.Label>Lead Name</Form.Label>
+              <Form.Control
+                name="leadName"
+                type="text"
+                placeholder="Lead Name"
+                value={formData.leadName ?? ""}
+                onChange={handleChange}
+                size="sm"
+              />
+            </Form.Group>
+          </Col>
+          <Col md={3}>
+            <Form.Group controlId="leadOccupation">
+              <Form.Label>Lead Occupation</Form.Label>
+              <Form.Select
+                name="leadOccupation"
+                value={formData.leadOccupation ?? ""}
+                onChange={handleChange}
+                size="sm"
+              >
+                <option value="">Select Lead Occupation</option>
+                <option value="Businessman">Businessman</option>
+                <option value="Govt.Service">Govt.Service</option>
+                <option value="Private Service">Private Service</option>
+                <option value="Retired">Retired</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+          <Col md={3}>
+            <Form.Group controlId="leadOccupationType">
+              <Form.Label>Occupation Type</Form.Label>
+              <Form.Select
+                name="leadOccupationType"
+                value={formData.leadOccupationType ?? ""}
+                onChange={handleChange}
+                size="sm"
+              >
+                <option value="">Select Occupation Type</option>
+                <option value="CA">CA</option>
+                <option value="Jwellars">Jwellars</option>
+                <option value="Iron Merchant">Iron Merchant</option>
+                <option value="Kirana Merchant">Kirana Merchant</option>
+                <option value="Sugar Tredars">Sugar Tredars</option>
+                <option value="Cloth Merchant">Cloth Merchant</option>
+                <option value="Whole Sale Stationary">Whole Sale Stationary</option>
+                <option value="Tent & Lighte">Tent & Lighte</option>
+                <option value="Pan Masala Merchant">Pan Masala Merchant</option>
+                <option value="Bartan Merchant">Bartan Merchant</option>
+                <option value="Paper Traders">Paper Traders</option>
+                <option value="Restorent Ownar">Restorent Ownar</option>
+                <option value="Hotel Ownar">Hotel Ownar</option>
+                <option value="Electronics Shop Owner">Electronics Shop Owner</option>
+                <option value="Electricals Shop Owner">Electricals Shop Owner</option>
+                <option value="Tyre Dealers">Tyre Dealers</option>
+                <option value="Tea Merchents">Tea Merchents</option>
+                <option value="Whole Sale Medical Shop">Whole Sale Medical Shop</option>
+                <option value="Automobile Dealears">Automobile Dealears</option>
+                <option value="Cycle Dealers">Cycle Dealers</option>
+                <option value="Transportars">Transportars</option>
+                <option value="Retail Cloth Merchant">Retail Cloth Merchant</option>
+                <option value="Bangle Merchant">Bangle Merchant</option>
+                <option value="Book Salears">Book Salears</option>
+                <option value="Grain & Oil Seads Merchant">Grain & Oil Seads Merchant</option>
+                <option value="Oil & Ghee Merchant">Oil & Ghee Merchant</option>
+                <option value="Doctors">Doctors</option>
+                <option value="PVT.Service">PVT.Service</option>
+                <option value="Retired">Retired</option>
+                <option value="Industrialist">Industrialist</option>
+                <option value="Teacher">Teacher</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+        </Row>
+
+        <Row className="mb-4">
+          <Col md={4}>
+            <Form.Group controlId="callingPurpose">
+              <Form.Label>Calling Purpose</Form.Label>
+              <Form.Select
+                name="callingPurpose"
+                value={formData.callingPurpose ?? ""}
+                onChange={handleChange}
+                size="sm"
+              >
+                <option value="">-- Select Purpose --</option>
+                <option value="Follow-up">Follow-up</option>
+                <option value="Meeting Schedule">Meeting Schedule</option>
+                <option value="Query Resolution">Query Resolution</option>
+                <option value="Proposal Discussion">Proposal Discussion</option>
+                <option value="Other">Other</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+          <Col md={4}>
+            <Form.Group controlId="name">
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                name="name"
+                type="text"
+                placeholder="Name"
+                value={formData.name ?? ""}
+                onChange={handleChange}
+                size="sm"
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+
+        <Button type="submit" className="btn btn-primary">
+          {isEdit && suspectData?._id ? "Update" : "Submit Lead"}
+        </Button>
+      </Form>
+
+      {isEdit && (
+        <div className="mt-4">
+          <h4>Call Summary</h4>
+          <Form onSubmit={handleCallSummarySubmit}>
+            <Row>
+              <Col md={3}>
+                <Form.Group controlId="callStatus">
+                  <Form.Label>Call Status</Form.Label>
+                  <Form.Select
+                    name="callStatus"
+                    value={callSummary.callStatus}
+                    onChange={handleCallSummaryChange}
+                    size="sm"
+                  >
+                    <option value="">-- Select --</option>
+                    <option value="Call Not Picked">Call Not Picked</option>
+                    <option value="Call After Sometimes">Call After Sometimes</option>
+                    <option value="Others">Others</option>
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+              <Col md={3}>
+                <Form.Group controlId="nextCallDate">
+                  <Form.Label>Next Call Date</Form.Label>
+                  <Form.Control
+                    name="nextCallDate"
+                    type="date"
+                    value={callSummary.nextCallDate}
+                    onChange={handleCallSummaryChange}
+                    size="sm"
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={3}>
+                <Form.Group controlId="time">
+                  <Form.Label>Time</Form.Label>
+                  <Form.Control
+                    name="time"
+                    type="time"
+                    value={callSummary.time}
+                    onChange={handleCallSummaryChange}
+                    size="sm"
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              <Col md={12}>
+                <Form.Group controlId="remark">
+                  <Form.Label>Remark</Form.Label>
+                  <Form.Control
+                    name="remark"
+                    type="text"
+                    value={callSummary.remark}
+                    onChange={handleCallSummaryChange}
+                    size="sm"
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Button type="submit" className="btn btn-primary">
+              Submit Call Summary
+            </Button>
+          </Form>
+        </div>
+      )}
+    </div>
   );
 };
 

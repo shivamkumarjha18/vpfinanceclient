@@ -971,11 +971,11 @@ const PersonalDetailsFormForProspect = ({ isEdit, prospectData, onProspectCreate
         </Col>
         <Col md={5}>
           <Form.Group controlId="groupName">
-            <Form.Label>Group Name</Form.Label>
+            <Form.Label>Group Head</Form.Label>
             <Form.Control
               name="groupName"
               type="text"
-              placeholder="Group Name"
+              placeholder="Group Head"
               value={formData.groupName ?? ""}
               onChange={handleChange}
               size="sm"

@@ -1,8 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { loginUser } from "../../redux/feature/auth/authThunx"; // ek hi thunk banayega
+import { loginUser } from "../../redux/feature/auth/authThunx";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -31,8 +31,12 @@ export default function Login() {
         navigate("/telecaller/dashboard");
       } else if (user.role === "Telemarketer") {
         navigate("/telemarketer/dashboard");
+      } else if (user.role === "OA") {
+        navigate("/");
       } else if (user.role === "OE") {
         navigate("/oe/dashboard");
+      } else if (user.role === "HR") {
+        navigate("/hr/dashboard");
       }
     }
     if (error) {
@@ -63,7 +67,135 @@ export default function Login() {
         <button type="submit" disabled={loading}>
           {loading ? "Logging in..." : "Login"}
         </button>
+
+        {/* Register Links Section */}
+        <div className="register-section">
+          <p>Don't have an account? Register as:</p>
+          <div className="register-links">
+            <Link to="/telecaller/register" className="register-link">
+              📞 Telecaller
+            </Link>
+            <Link to="/telemarketer/register" className="register-link">
+              📈 Telemarketer
+            </Link>
+            <Link to="/OA/register" className="register-link">
+              🏢 Office Admin
+            </Link>
+            <Link to="/OE/register" className="register-link">
+              🔧 Office Executive
+            </Link>
+            <Link to="/HR/register" className="register-link">
+              👥 HR
+            </Link>
+          </div>
+        </div>
       </form>
+
+      <style jsx>{`
+        .container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          font-family: 'Segoe UI', sans-serif;
+        }
+
+        .card {
+          background: white;
+          padding: 30px;
+          border-radius: 12px;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+          width: 100%;
+          max-width: 400px;
+        }
+
+        h2 {
+          text-align: center;
+          margin-bottom: 20px;
+          color: #333;
+          font-size: 24px;
+        }
+
+        input {
+          width: 100%;
+          padding: 12px;
+          margin-bottom: 15px;
+          border: 1px solid #ddd;
+          border-radius: 6px;
+          font-size: 14px;
+          box-sizing: border-box;
+        }
+
+        input:focus {
+          outline: none;
+          border-color: #667eea;
+        }
+
+        button {
+          width: 100%;
+          padding: 12px;
+          background: #667eea;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          font-size: 16px;
+          cursor: pointer;
+          margin-bottom: 20px;
+        }
+
+        button:hover {
+          background: #5a67d8;
+        }
+
+        button:disabled {
+          background: #ccc;
+          cursor: not-allowed;
+        }
+
+        .register-section {
+          text-align: center;
+          border-top: 1px solid #eee;
+          padding-top: 20px;
+        }
+
+        .register-section p {
+          margin-bottom: 15px;
+          color: #666;
+          font-size: 14px;
+        }
+
+        .register-links {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .register-link {
+          display: block;
+          padding: 8px 12px;
+          background: #f8f9ff;
+          color: #667eea;
+          text-decoration: none;
+          border-radius: 6px;
+          font-size: 13px;
+          border: 1px solid #e2e8f0;
+          transition: all 0.2s;
+        }
+
+        .register-link:hover {
+          background: #667eea;
+          color: white;
+          transform: translateY(-1px);
+        }
+
+        @media (max-width: 480px) {
+          .card {
+            margin: 20px;
+            padding: 20px;
+          }
+        }
+      `}</style>
     </div>
   );
 }

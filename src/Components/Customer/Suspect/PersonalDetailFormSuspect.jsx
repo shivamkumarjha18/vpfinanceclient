@@ -211,11 +211,11 @@ const PersonalDetailsFormForSuspect = ({ isEdit, suspectData, onSuspectCreated }
         </Col>
         <Col md={5}>
           <Form.Group controlId="groupName">
-            <Form.Label>Family Head</Form.Label>
+            <Form.Label>Group Head</Form.Label>
             <Form.Control
               name="groupName"
               type="text"
-              placeholder="Family Head"
+              placeholder="Group Head"
               value={formData.groupName ?? ""}
               onChange={handleChange}
               size="sm"
@@ -311,6 +311,7 @@ const PersonalDetailsFormForSuspect = ({ isEdit, suspectData, onSuspectCreated }
               value={formData.mobileNo ?? ""}
               onChange={handleChange}
               size="sm"
+              maxLength={10}
             />
           </Form.Group>
         </Col>
@@ -324,6 +325,8 @@ const PersonalDetailsFormForSuspect = ({ isEdit, suspectData, onSuspectCreated }
               value={formData.whatsappNo ?? ""}
               onChange={handleChange}
               size="sm"
+              maxLength={10}
+
             />
           </Form.Group>
         </Col>
@@ -337,6 +340,8 @@ const PersonalDetailsFormForSuspect = ({ isEdit, suspectData, onSuspectCreated }
               value={formData.contactNo ?? ""}
               onChange={handleChange}
               size="sm"
+              maxLength={10}
+
             />
           </Form.Group>
         </Col>

@@ -48,6 +48,7 @@ const SuspectFirstForm = () => {
 
   return (
     <div className="container py-5">
+      <h1>Suspect</h1>
       <ul className="nav nav-pills mb-3 bg-white shadow-lg" id="pills-tab" role="tablist">
         <li className="nav-item" role="presentation">
           <button
@@ -57,7 +58,7 @@ const SuspectFirstForm = () => {
             <FaUser className="me-2" /> Personal Details
           </button>
         </li>
-        <li className="nav-item" role="presentation">
+        {/* <li className="nav-item" role="presentation">
           <button
             className={`nav-link custom-tab ${activeTab === "family" ? "active-custom" : ""}`}
             onClick={() => handleTabChange("family")}
@@ -88,7 +89,7 @@ const SuspectFirstForm = () => {
           >
             <FaBullseye className="me-2" /> Proposed Financial Plan
           </button>
-        </li>
+        </li> */}
       </ul>
 
       <div className="tab-content p-4 border rounded bg-light">

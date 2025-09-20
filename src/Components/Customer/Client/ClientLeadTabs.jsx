@@ -26,7 +26,9 @@ const ClientLeadTabs = () => {
 
   return (
     <div className="p-4 mt-4">
-      {/* Tab Buttons */}
+      
+{/* <h1>Clients</h1> */}
+
       <div className="d-flex mb-3">
         <button
           className={`btn btn-${activeTab === "add" ? "primary" : "outline-primary"} me-2`}

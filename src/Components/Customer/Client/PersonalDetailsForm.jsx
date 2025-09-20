@@ -92,9 +92,9 @@ const handleMobileWhatsappChange = (e) => {
     let updated = { ...prev, [name]: value };
 
     // ✅ agar mobileNo complete ho (10 digit for example) aur whatsapp edit nahi hua ho
-    if (name === "mobileNo" && value.length === 10 && !whatsappEdited  && !contactEdited) {
+    if (name === "mobileNo" && value.length === 10 && !whatsappEdited  ) {
       updated.whatsappNo = value;
-      updated.contactNo=value;
+   
     }
 
     return updated;
@@ -103,9 +103,7 @@ const handleMobileWhatsappChange = (e) => {
   if (name === "whatsappNo") {
     setWhatsappEdited(true);
   }
-  if(name==="contactNo"){
-    setcontactEdited(true)
-  }
+
 };
 
 
@@ -307,11 +305,11 @@ useEffect(() => {
         </Col>
         <Col md={5}>
           <Form.Group controlId="groupName">
-            <Form.Label>Family Head</Form.Label>
+            <Form.Label>Group Head</Form.Label>
             <Form.Control
               name="groupName"
               type="text"
-              placeholder="Family Head"
+              placeholder="Group Head"
               value={formData.groupName ?? ""}
               onChange={handleChange}
               size="sm"
@@ -432,6 +430,7 @@ useEffect(() => {
       placeholder="Mobile No"
       value={formData.mobileNo ?? ""}
       onChange={handleMobileWhatsappChange}
+      maxLength={10}
       size="sm"
     />
   </Form.Group>
@@ -445,6 +444,7 @@ useEffect(() => {
       type="text"
       placeholder="WhatsApp No"
       value={formData.whatsappNo ?? ""}
+      maxLength={10}
       onChange={handleMobileWhatsappChange}
       size="sm"
     />
@@ -453,13 +453,21 @@ useEffect(() => {
 
         <Col md={3}>
           <Form.Group controlId="contactNo">
-            <Form.Label>Contact No</Form.Label>
+            <Form.Label>Phone No</Form.Label>
             <Form.Control
               name="contactNo"
               type="text"
-              placeholder="Contact No"
-              value={formData.contactNo ?? ""}
-              onChange={handleMobileWhatsappChange}
+              placeholder="Phone No"
+              maxLength={14}
+
+           value={`0755${formData.contactNo?.replace(/^0755/, "") ?? ""}`}
+              // onChange={handleMobileWhatsappChange}
+         onChange={(e) =>
+    setFormData({
+      ...formData,
+      contactNo: `0755${e.target.value.replace(/^0755/, "")}`, // ✅ ensure prefix stays
+    })
+  }
               size="sm"
             />
           </Form.Group>
@@ -497,7 +505,8 @@ useEffect(() => {
             <Form.Label>PA Mobile No</Form.Label>
             <Form.Control
               name="paMobileNo"
-              type="text"
+              type="tel"
+              maxLength={10}
               placeholder="PA Mobile No"
               value={formData.paMobileNo ?? ""}
               onChange={handleChange}
@@ -512,6 +521,7 @@ useEffect(() => {
               name="adharNumber"
               type="text"
               placeholder="Aadhar Number"
+              maxLength={12}
               value={formData.adharNumber ?? ""}
               onChange={handleChange}
               size="sm"
@@ -520,14 +530,16 @@ useEffect(() => {
         </Col>
         <Col md={3}>
           <Form.Group controlId="panCardNumber">
-            <Form.Label>PAN Card No</Form.Label>
+            <Form.Label>PAN  No.</Form.Label>
             <Form.Control
               name="panCardNumber"
               type="text"
-              placeholder="PAN Card Number"
+              placeholder="PAN  Number"
               value={formData.panCardNumber ?? ""}
               onChange={handleChange}
+               maxLength={10}
               size="sm"
+              style={{ textTransform: "uppercase" }}
             />
           </Form.Group>
         </Col>
@@ -675,7 +687,7 @@ useEffect(() => {
             />
           </Form.Group>
         </Col>
-        <Col md={3}>
+        <Col md={2}>
           <Form.Group controlId="bestTime">
             <Form.Label>Best Time</Form.Label>
             <Form.Select

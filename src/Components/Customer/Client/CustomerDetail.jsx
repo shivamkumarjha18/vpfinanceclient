@@ -426,7 +426,7 @@ const CustomerDetail = () => {
                 <div className="detail-item">
                   <FiPhone className="detail-icon" />
                   <div>
-                    <p className="detail-label">Name</p>
+                    <p className="detail-label">Group head</p>
                     <p className="detail-value">
                       {userData?.personalDetails?.groupName || "Finance"}
                     </p>
@@ -463,7 +463,7 @@ const CustomerDetail = () => {
                   <div className="detail-item">
                     <FiPhone className="detail-icon" />
                     <div>
-                      <p className="detail-label">Phone</p>
+                      <p className="detail-label">Mobile No</p>
                       <p className="detail-value">
                         {userData?.personalDetails?.mobileNo || "N/A"}
                       </p>
@@ -479,7 +479,7 @@ const CustomerDetail = () => {
                     </div>
                   </div>
                   <div className="detail-item">
-                    <FiMail className="detail-icon" />
+                    {/* <FiMail className="detail-icon" /> */}
                     <div>
                       <p className="detail-label">Status</p>
                       <p className="detail-value">
@@ -488,7 +488,7 @@ const CustomerDetail = () => {
                     </div>
                     </div>
                      <div className="detail-item">
-                    <FiMail className="detail-icon" />
+                    {/* <FiMail className="detail-icon" /> */}
                     <div>
                       <p className="detail-label">Family Income</p>
 
