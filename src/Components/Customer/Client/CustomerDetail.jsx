@@ -5,7 +5,9 @@ import { Row, Col } from "react-bootstrap";
 import { useRef } from "react";
 import KycComponent from "./KYCComponent";
 //import { Pencil } from "lucide-react";
-
+import { GrStatusGoodSmall } from "react-icons/gr";
+import { FaUserTie } from "react-icons/fa";
+import { BsCashCoin } from "react-icons/bs";
 import {
   FiUser,
   FiPhone,
@@ -424,7 +426,7 @@ const CustomerDetail = () => {
                   </span>
                 </div>
                 <div className="detail-item">
-                  <FiPhone className="detail-icon" />
+                <FiUser className="detail-icon" />
                   <div>
                     <p className="detail-label">Group head</p>
                     <p className="detail-value">
@@ -435,7 +437,7 @@ const CustomerDetail = () => {
 
                 <div className="profile-details">
                   <div className="detail-item">
-                    <FiUser className="detail-icon" />
+                  <FaUserTie   className="detail-icon"/>
                     <div>
                       <p className="detail-label">Lead Occupation</p>
                       <p className="detail-value ">
@@ -468,7 +470,20 @@ const CustomerDetail = () => {
                         {userData?.personalDetails?.mobileNo || "N/A"}
                       </p>
                     </div>
+                     
                   </div>
+                     <div className="detail-item">
+                    <FiPhone className="detail-icon" />
+                    <div>
+                      <p className="detail-label">Phone No</p>
+                      <p className="detail-value">
+                        {userData?.personalDetails?.contactNo || "N/A"}
+                      </p>
+                    </div>
+
+                     
+                  </div>
+                  
                   <div className="detail-item">
                     <FiMail className="detail-icon" />
                     <div>
@@ -480,6 +495,8 @@ const CustomerDetail = () => {
                   </div>
                   <div className="detail-item">
                     {/* <FiMail className="detail-icon" /> */}
+                    <GrStatusGoodSmall className="detail-icon" />
+
                     <div>
                       <p className="detail-label">Status</p>
                       <p className="detail-value">
@@ -489,6 +506,7 @@ const CustomerDetail = () => {
                     </div>
                      <div className="detail-item">
                     {/* <FiMail className="detail-icon" /> */}
+                    <BsCashCoin  className="detail-icon"  />
                     <div>
                       <p className="detail-label">Family Income</p>
 

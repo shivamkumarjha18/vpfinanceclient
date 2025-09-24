@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Form, Row, Col, Button } from "react-bootstrap";
+
+import { Tabs, Tab, Form, Button, Row, Col, Table } from "react-bootstrap";
 import { createSuspect, updateSuspectPersonalDetails } from "../../../redux/feature/SuspectRedux/SuspectThunx";
 import { fetchDetails } from "../../../redux/feature/LeadSource/LeadThunx";
 import { getAllOccupations } from "../../../redux/feature/LeadOccupation/OccupationThunx";
@@ -32,6 +33,8 @@ const gradeMap = {
 
 
 const AddSuspect = ({ isEdit, suspectData, onSuspectCreated }) => {
+
+
   const dispatch = useDispatch();
   const initialFormState = {
     salutation: "",
@@ -64,6 +67,28 @@ const AddSuspect = ({ isEdit, suspectData, onSuspectCreated }) => {
     callingPurpose: "",
     name: "",
   };
+
+  // Yeh data tu API se bhi laa sakta hai, abhi ke liye dummy hai
+const callHistory = [
+  {
+    mobile: "7987622690",
+    remark: "2025-09-22 : call not picked",
+    status: "",
+    callBy: "Employee1",
+  },
+  {
+    mobile: "7987622690",
+    remark: "2024-05-18 : HDFC ERGO Due 3 saal ka ek sath me le liya hai",
+    status: "Abhi nhi lena",
+    callBy: "Employee1",
+  },
+  {
+    mobile: "7987622690",
+    remark: "2024-04-30 : call not received",
+    status: "Others",
+    callBy: "Employee1",
+  },
+];
 
   const [formData, setFormData] = useState(initialFormState);
   const [callSummary, setCallSummary] = useState({
@@ -692,74 +717,116 @@ const AddSuspect = ({ isEdit, suspectData, onSuspectCreated }) => {
         </Button>
       </Form>
 
-      {isEdit && (
-        <div className="mt-4">
-          <h4>Call Summary</h4>
-          <Form onSubmit={handleCallSummarySubmit}>
-            <Row>
-              <Col md={3}>
-                <Form.Group controlId="callStatus">
-                  <Form.Label>Call Status</Form.Label>
-                  <Form.Select
-                    name="callStatus"
-                    value={callSummary.callStatus}
-                    onChange={handleCallSummaryChange}
-                    size="sm"
-                  >
-                    <option value="">-- Select --</option>
-                    <option value="Call Not Picked">Call Not Picked</option>
-                    <option value="Call After Sometimes">Call After Sometimes</option>
-                    <option value="Others">Others</option>
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-              <Col md={3}>
-                <Form.Group controlId="nextCallDate">
-                  <Form.Label>Next Call Date</Form.Label>
-                  <Form.Control
-                    name="nextCallDate"
-                    type="date"
-                    value={callSummary.nextCallDate}
-                    onChange={handleCallSummaryChange}
-                    size="sm"
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={3}>
-                <Form.Group controlId="time">
-                  <Form.Label>Time</Form.Label>
-                  <Form.Control
-                    name="time"
-                    type="time"
-                    value={callSummary.time}
-                    onChange={handleCallSummaryChange}
-                    size="sm"
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={12}>
-                <Form.Group controlId="remark">
-                  <Form.Label>Remark</Form.Label>
-                  <Form.Control
-                    name="remark"
-                    type="text"
-                    value={callSummary.remark}
-                    onChange={handleCallSummaryChange}
-                    size="sm"
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Button type="submit" className="btn btn-primary">
-              Submit Call Summary
-            </Button>
-          </Form>
-        </div>
-      )}
+    {isEdit && (
+  <div className="mt-4">
+    <h4>Call Summary</h4>
+
+    <Tabs defaultActiveKey="addTask" id="call-summary-tabs" className="mb-3">
+      {/* Add Call Task Tab */}
+      <Tab eventKey="addTask" title="Add Call Task">
+        <Form onSubmit={handleCallSummarySubmit}>
+          <Row>
+            <Col md={3}>
+              <Form.Group controlId="callStatus">
+                <Form.Label>Call Status</Form.Label>
+                <Form.Select
+                  name="callStatus"
+                  value={callSummary.callStatus}
+                  onChange={handleCallSummaryChange}
+                  size="sm"
+                >
+                  <option value="">-- Select --</option>
+                  <option value="Call Not Picked">Call Not Picked</option>
+                  <option value="Call After Sometimes">Call After Sometimes</option>
+                  <option value="Wrong Number">Wrong Number</option>
+                  <option value="Not Interested">Not Interested</option>
+                  <option value="Others">Others</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
+            <Col md={3}>
+              <Form.Group controlId="nextCallDate">
+                <Form.Label>Next Call Date</Form.Label>
+                <Form.Control
+                  name="nextCallDate"
+                  type="date"
+                  value={callSummary.nextCallDate}
+                  onChange={handleCallSummaryChange}
+                  size="sm"
+                />
+              </Form.Group>
+            </Col>
+            <Col md={3}>
+              <Form.Group controlId="time">
+                <Form.Label>Time</Form.Label>
+                <Form.Control
+                  name="time"
+                  type="time"
+                  value={callSummary.time}
+                  onChange={handleCallSummaryChange}
+                  size="sm"
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={12}>
+              <Form.Group controlId="remark">
+                <Form.Label>Remark</Form.Label>
+                <Form.Control
+                  name="remark"
+                  type="text"
+                  value={callSummary.remark}
+                  onChange={handleCallSummaryChange}
+                  size="sm"
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+          <Button type="submit" className="btn btn-primary mt-2">
+            Submit Call Summary
+          </Button>
+        </Form>
+      </Tab>
+
+      {/* All Call History Tab */}
+      <Tab eventKey="callHistory" title="All Call History">
+        <Table bordered hover size="sm" className="mt-3">
+          <thead>
+            <tr>
+              <th>Mobile</th>
+              <th>Remark</th>
+              <th>Status</th>
+              <th>Call By</th>
+            </tr>
+          </thead>
+          <tbody>
+            {callHistory && callHistory.length > 0 ? (
+              callHistory.map((call, index) => (
+                <tr key={index}>
+                  <td>{call.mobile}</td>
+                  <td>{call.remark}</td>
+                  <td>{call.status || ":"}</td>
+                  <td>{call.callBy}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4" className="text-center">
+                  No Call History Found
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </Table>
+      </Tab>
+    </Tabs>
+  </div>
+)}
     </div>
   );
 };
+
+
 
 export default AddSuspect;

@@ -61,7 +61,12 @@ useEffect(()=>{
 
   const handleClientCreated = (newClientId) => {
     setClientId(newClientId);
+    // setActiveTab("family")
   };
+
+  const changeTab=(tabChange)=>{
+setActiveTab(changeTab)
+  }
 
   return (
     <div className="container py-5">
@@ -116,6 +121,7 @@ useEffect(()=>{
             clientData={clientData}
             onClientCreated={handleClientCreated}
             setFamilyDetail={setFamilyDetail}
+            changeTab={changeTab}
           />
         )}
         {activeTab === "family" && (

@@ -947,6 +947,8 @@ const FamilyMembersForm = ({ clientId, clientData, onClientCreated, familyDetail
 
   return (
     <Form onSubmit={handleSubmit}>
+
+    
       {/* Self Member Section */}
       {selfMember && (
         <div className="border rounded p-3 mb-3 bg-light">
@@ -1029,7 +1031,9 @@ const FamilyMembersForm = ({ clientId, clientData, onClientCreated, familyDetail
                 <Form.Label>Occupation</Form.Label>
                 <Form.Control
                   name="occupation"
-                  value={selfMember.occupation}
+                  value={selfMember.occupation || familyDetail?.
+leadOccupation
+}
                   onChange={(e) => handleMemberChange(e, familyMembers.indexOf(selfMember))}
                 />
               </Form.Group>

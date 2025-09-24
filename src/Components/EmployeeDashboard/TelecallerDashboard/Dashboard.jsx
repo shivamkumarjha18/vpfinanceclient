@@ -1,155 +1,279 @@
-import React from "react";
+
+
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Spinner } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { getAllSuspects } from "../../../redux/feature/SuspectRedux/SuspectThunx";
 
 const DashboardPage = () => {
-  const stats = [
-    { title: "Balance Leads", value: 3, color: "#7C3AED" },
-    { title: "Calling Done", value: 2, color: "#3B82F6" },
-    { title: "Forwarded Leads", value: 2, color: "#F97316" },
-    { title: "Rejected Leads", value: 0, color: "#EF4444" },
-    { title: "Appointments Done", value: 0, color: "#10B981" },
-  ];
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { suspects = [], loading, error } = useSelector((state) => state.suspect);
 
-  const tasks = [
-    {
-      date: "2025-07-12",
-      name: "Manoj Verma (Govt. Emp.)",
-      org: "—",
-      area: "—",
-      mobile: "7987622690",
-      purpose: "Portfolio",
-      status: "HDFC ERGO Due month 3 saal ka ek sath me liya hai",
-      remark: "—",
-      taskStatus: "Update",
-    },
-    {
-      date: "2025-06-11",
-      name: "Pradeep Enterprises",
-      org: "—",
-      area: "—",
-      mobile: "8889996171",
-      purpose: "Portfolio",
-      status: "TATA Due Month 2 Saal ka ek sath karaya hai",
-      remark: "—",
-      taskStatus: "Forward",
-    },
-    {
-      date: "2025-05-08",
-      name: "RAHUL ROOPOLIA",
-      org: "—",
-      area: "—",
-      mobile: "9229201469",
-      purpose: "Life Insurance",
-      status: "Life Insurance Others",
-      remark: "HDFC ERGO Due Month nhi hota hai mera 5 saal ka ek sath jama hota hai",
-      taskStatus: "Close",
-    },
-    {
-      date: "2025-05-08",
-      name: "RAHUL ROOPOLIA",
-      org: "—",
-      area: "—",
-      mobile: "9229201469",
-      purpose: "Life Insurance",
-      status: "HDFC ERGO Due Month 5 saal me ek sath hota hai",
-      remark: "—",
-      taskStatus: "Forward",
-    },
-    {
-      date: "2025-04-25",
-      name: "PRABHUDDH KAUSHAL",
-      org: "—",
-      area: "—",
-      mobile: "7620000508",
-      purpose: "Portfolio",
-      status: "Others",
-      remark: "TATA Due Month 25 May Abhi renewal karaya hai",
-      taskStatus: "Close",
-    },
-    {
-      date: "2025-04-01",
-      name: "PRADEEP MAJHI",
-      org: "—",
-      area: "—",
-      mobile: "735478640",
-      purpose: "Portfolio",
-      status: "Others",
-      remark: "Star health Due Month April (Renewal ho gaya hai) next year call",
-      taskStatus: "Update",
-    },
-  ];
+  // State for action panel (Forward / Close / Call Back)
+  const [actionPanel, setActionPanel] = useState(null); // { type, suspect }
+  const [formData, setFormData] = useState({
+    status: "",
+    nextCallDate: "",
+    time: "",
+    remark: "",
+  });
+
+  useEffect(() => {
+    dispatch(getAllSuspects());
+  }, [dispatch]);
+
+  // Dummy summary counts
+  const todaySummary = {
+    balanceLeads: 3,
+    callingDone: 0,
+    forwardedLeads: 0,
+    rejectedLeads: 0,
+    appointmentsDone: 0,
+  };
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = () => {
+    console.log("Submitted:", {
+      ...formData,
+      action: actionPanel?.type,
+      suspect: actionPanel?.suspect,
+    });
+    alert(`✅ ${actionPanel?.type} submitted for ${actionPanel?.suspect.personalDetails?.name}`);
+    setActionPanel(null);
+    setFormData({ status: "", nextCallDate: "", time: "", remark: "" });
+  };
 
   return (
     <div className="dashboard-page">
-      {/* Stats Cards */}
-      <div className="stats-grid">
-        {stats.map((stat, idx) => (
-          <div
-            key={idx}
-            className="stat-card"
-            style={{ borderTop: `4px solid ${stat.color}` }}
-          >
-            <div className="stat-value">{stat.value}</div>
-            <div className="stat-title">{stat.title}</div>
-            <a href="#" className="more-info">More info ⓘ</a>
+      {/* ---- Action Panel ---- */}
+{actionPanel && (
+  <div className="action-panel">
+    <div className="action-header">
+      <span>
+        📩 {actionPanel.suspect.personalDetails?.name || "-"}{" "}
+        <b>({actionPanel.type.toUpperCase()})</b>
+      </span>
+      <button className="close-btn" onClick={() => setActionPanel(null)}>✖</button>
+    </div>
+
+    <div className="action-body">
+
+      {/* ✅ Forward Form */}
+      {actionPanel.type === "forward" && (
+        <>
+          <div className="form-row">
+            <label>Status</label>
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleFormChange}
+            >
+              <option value="">-- Select --</option>
+              <option value="Call Not Picked">Call Not Picked</option>
+              <option value="Call After Some Time">Call After Some Time</option>
+              <option value="Not Interested">Not Interested</option>
+              <option value="Others">Others</option>
+            </select>
           </div>
-        ))}
+
+          <div className="form-row">
+            <label>Next Call Date</label>
+            <input
+              type="date"
+              name="nextCallDate"
+              value={formData.nextCallDate}
+              onChange={handleFormChange}
+            />
+            <label>Time</label>
+            <input
+              type="time"
+              name="time"
+              value={formData.time}
+              onChange={handleFormChange}
+            />
+          </div>
+
+          <div className="form-row">
+            <label>Remark</label>
+          <input
+  type="text"
+  name="remark"
+  value={formData.remark}
+  onChange={handleFormChange}
+  style={{ width: "90%" }}
+/>
+
+          </div>
+        </>
+      )}
+
+      {/* ✅ Close Form */}
+      {actionPanel.type === "close" && (
+        <>
+          <div className="form-row">
+            <label>Status</label>
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleFormChange}
+            >
+              <option value="">-- Select --</option>
+              <option value="Not Interested">Not Interested</option>
+              <option value="Others">Others</option>
+            </select>
+          </div>
+
+          <div className="form-row">
+            <label>Remark</label>
+               <input
+  type="text"
+  name="remark"
+  value={formData.remark}
+  onChange={handleFormChange}
+  style={{ width: "90%" }}
+/>
+          </div>
+        </>
+      )}
+
+      {/* ✅ Callback Form */}
+      {actionPanel.type === "callback" && (
+        <div className="form-row">
+          <label>Remark</label>
+           <input
+  type="text"
+  name="remark"
+  value={formData.remark}
+  onChange={handleFormChange}
+  style={{ width: "90%" }}
+/>
+        </div>
+      )}
+
+      <button className="submit-btn" onClick={handleSubmit}>
+        Submit
+      </button>
+    </div>
+  </div>
+)}
+
+      {/* ---- Today's Call Section ---- */}
+      <h2 className="table-title">Today Call Task</h2>
+      <div className="today-call-cards">
+        <div className="card purple" onClick={() => navigate("/telecaller/balance-leads")}>
+          <h3>{todaySummary.balanceLeads}</h3>
+          <p>Balance Leads</p>
+        </div>
+        <div className="card blue" onClick={() => navigate("/telecaller/calling-done")}>
+          <h3>{todaySummary.callingDone}</h3>
+          <p>Calling Done</p>
+        </div>
+        <div className="card orange" onClick={() => navigate("/telecaller/forwarded-leads")}>
+          <h3>{todaySummary.forwardedLeads}</h3>
+          <p>Forwarded Leads</p>
+        </div>
+        <div className="card red" onClick={() => navigate("/telecaller/rejected-leads")}>
+          <h3>{todaySummary.rejectedLeads}</h3>
+          <p>Rejected Leads</p>
+        </div>
+        <div className="card green" onClick={() => navigate("/telecaller/appointments-done")}>
+          <h3>{todaySummary.appointmentsDone}</h3>
+          <p>Appointments Done</p>
+        </div>
       </div>
 
-      {/* Calls Table */}
-      <div className="table-container">
+      {/* ---- Previous Call Task ---- */}
+      <div className="table-container mt-3">
         <h2 className="table-title">Previous Call Task</h2>
-        <table className="task-table">
-          <thead>
-            <tr>
-              <th>Task Date</th>
-              <th>Suspect Name</th>
-              <th>Org Name</th>
-              <th>Area</th>
-              <th>Mobile</th>
-              <th>Purpose</th>
-              <th>Status</th>
-              <th>Remark</th>
-              <th>Call Back</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tasks.map((task, idx) => (
-              <tr key={idx}>
-                <td>{task.date}</td>
-                <td>{task.name}</td>
-                <td>{task.org}</td>
-                <td>{task.area}</td>
-                <td>{task.mobile}</td>
-                <td>{task.purpose}</td>
-                <td>{task.status}</td>
-                <td>{task.remark}</td>
-                <td>
-                  <div className="button-group">
-                    <button
-                      className={task.taskStatus === "Forward" ? "active-btn" : "inactive-btn"}
-                    >
-                      Forward
-                    </button>
-                    <button
-                      className={task.taskStatus === "Close" ? "active-btn" : "inactive-btn"}
-                    >
-                      Close
-                    </button>
-                    <button
-                      className={task.taskStatus === "Update" ? "active-btn" : "inactive-btn"}
-                    >
-                      Update
-                    </button>
-                    <button className="callback-btn">Call Back</button>
-                  </div>
-                </td>
+
+        {loading ? (
+          <div className="text-center mt-4">
+            <Spinner animation="border" />
+          </div>
+        ) : error ? (
+          <p className="text-danger">{error}</p>
+        ) : (
+          <table className="task-table">
+            <thead>
+              <tr>
+                <th>Update</th>
+                <th>Task Date</th>
+                <th>Suspect Name</th>
+                <th>Organisation Name</th>
+                <th>Area</th>
+                <th>Mobile</th>
+                <th>Calling Purpose</th>
+                <th>Calling Status</th>
+                <th>Remark</th>
+                <th>Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {suspects.map((suspect) => {
+                const personal = suspect.personalDetails || {};
+                const contact = suspect.contactInfo || {};
+                const call = suspect.callSummary || {};
+                const fullName = `${personal.salutation || ""} ${personal.groupName || personal.name || ""}`.trim();
+
+                return (  <tr key={suspect._id}>
+                    <td>
+                    
+  <a href={`tel:${personal.contactNo || contact.mobileNo}`} className="btn-sm btn-call">
+    📞
+  </a>
+                     
+                                        <button
+                      className="btn-sm btn-success"
+                    onClick={() => setActionPanel({ type: "forward", suspect })}
+                      >
+                        Forward
+                      </button>
+                        
+                                        <button
+                        className="btn-sm btn-danger"
+                        onClick={() => setActionPanel({ type: "close", suspect })}
+                      >
+                        Close
+                      </button>
+                    </td>
+                    <td>{new Date(suspect.createdAt).toLocaleDateString()}</td>
+                    <td
+                      className="clickable"
+                      onClick={() =>
+                        navigate(`/telecaller/suspect/edit/${suspect._id}`)
+                      }
+                    >
+                      {fullName || "-"}
+                    </td>
+                    <td>{personal.organisation || "-"}</td>
+                    <td>{personal.city || "-"}</td>
+                    <td>{personal.contactNo || contact.mobileNo || "-"}</td>
+                    <td>{call.purpose || "-portfolio"}</td>
+                    <td>{call.status || "Call Not Picked"}</td>
+                    <td>{call.remark || "-"}</td>
+                    <td>
+                      <button
+                        className="btn-sm btn-primary"
+                        onClick={() => setActionPanel({ type: "callback", suspect })}
+                      >
+                        Call Back
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
       </div>
 
-      {/* Style */}
+      {/* ---- Styles ---- */}
       <style jsx>{`
         .dashboard-page {
           padding: 15px;
@@ -157,43 +281,101 @@ const DashboardPage = () => {
           background: #f5f7fa;
           min-height: 100vh;
         }
-        .stats-grid {
-          display: grid;
-          grid-template-columns: repeat(5, minmax(120px, 1fr));
+
+        /* ---- Action Panel ---- */
+        .action-panel {
+          background: #fff;
+          border: 1px solid #ddd;
+          padding: 15px;
+          margin-bottom: 15px;
+          border-radius: 6px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .action-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-weight: 600;
+          background: #f8fafc;
+          padding: 8px 12px;
+          border-radius: 4px;
+          margin-bottom: 10px;
+        }
+        .close-btn {
+          background: transparent;
+          border: none;
+          font-size: 16px;
+          cursor: pointer;
+        }
+        .action-body {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+        .form-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        .form-row label {
+          min-width: 100px;
+          font-size: 13px;
+        }
+        .form-row input,
+        .form-row select {
+          padding: 6px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          font-size: 13px;
+        }
+        .submit-btn {
+          background: #f59e0b;
+          border: none;
+          color: #fff;
+          padding: 8px 16px;
+          border-radius: 5px;
+          cursor: pointer;
+          font-weight: 500;
+          margin-top: 8px;
+          width: 100px;
+        }
+        .submit-btn:hover {
+          background: #d97706;
+        }
+
+        /* ---- Today's Call Cards ---- */
+        .today-call-cards {
+          display: flex;
           gap: 15px;
           margin-bottom: 20px;
         }
-        .stat-card {
-          background: #fff;
+        .card {
+          flex: 1;
+          padding: 15px;
           border-radius: 6px;
-          padding: 12px;
+          color: #fff;
           text-align: center;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-          transition: transform 0.2s;
-        }
-        .stat-card:hover {
-          transform: translateY(-2px);
-        }
-        .stat-value {
-          font-size: 20px;
           font-weight: bold;
-          color: #333;
+          cursor: pointer;
         }
-        .stat-title {
-          font-size: 12px;
-          color: #666;
-          margin-top: 6px;
+        .card:hover {
+          opacity: 0.9;
         }
-        .more-info {
-          display: block;
-          margin-top: 6px;
-          color: #666;
-          text-decoration: none;
-          font-size: 10px;
+        .card h3 {
+          margin: 0;
+          font-size: 22px;
         }
-        .more-info:hover {
-          color: #000;
+        .card p {
+          margin: 0;
+          font-size: 13px;
         }
+        .purple { background: #6f42c1; }
+        .blue { background: #007bff; }
+        .orange { background: #fd7e14; }
+        .red { background: #dc3545; }
+        .green { background: #28a745; }
+
+        /* ---- Previous Call Table ---- */
         .table-container {
           background: #fff;
           border-radius: 6px;
@@ -220,63 +402,24 @@ const DashboardPage = () => {
           background: #f0f2f5;
           font-weight: 600;
         }
-        .task-table td {
-          vertical-align: top;
-        }
-        .button-group {
-          display: flex;
-          gap: 3px;
-        }
-        .active-btn {
-          background: #4CAF50;
-          color: white;
+
+        /* ---- Utility Buttons ---- */
+        .btn-sm {
+          padding: 4px 8px;
+          font-size: 11px;
           border: none;
-          padding: 3px 6px;
           border-radius: 3px;
           cursor: pointer;
-          font-size: 10px;
         }
-        .active-btn:hover {
-          background: #45a049;
-        }
-        .inactive-btn {
-          background: #e0e0e0;
-          color: #666;
-          border: none;
-          padding: 3px 6px;
-          border-radius: 3px;
-          cursor: not-allowed;
-          font-size: 10px;
-        }
-        .callback-btn {
-          background: #2196F3;
-          color: white;
-          border: none;
-          padding: 3px 6px;
-          border-radius: 3px;
-          cursor: pointer;
-          font-size: 10px;
-        }
-        .callback-btn:hover {
-          background: #1976D2;
-        }
-        @media (max-width: 768px) {
-          .stats-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-          .task-table th,
-          .task-table td {
-            font-size: 10px;
-            padding: 6px;
-          }
-          .table-container {
-            padding: 10px;
-          }
-        }
+        .btn-success { background: #28a745; color: #fff; }
+        .btn-danger { background: #dc3545; color: #fff; }
+        .btn-primary { background: #007bff; color: #fff; }
+
+        .clickable { color: #007bff; cursor: pointer; }
+        .clickable:hover { text-decoration: underline; }
       `}</style>
     </div>
   );
 };
 
 export default DashboardPage;
-

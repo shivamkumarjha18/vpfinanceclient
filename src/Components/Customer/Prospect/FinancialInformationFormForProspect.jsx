@@ -1,11 +1,10 @@
 
 
-
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import React, { useState, useEffect } from "react";
 import { Form, Row, Col, Button } from "react-bootstrap";
-import { addFinancialInfo } from "../../../redux/feature/ProspectRedux/ProspectThunx";
-import {toast} from "react-toastify"
+import { addFinancialInfo, updateFinancialInfo } from "../../../redux/feature/ClientRedux/ClientThunx";
+import { toast } from "react-toastify";
 
 const INSURANCE_OPTIONS = [
   "LIC Policy",
@@ -35,6 +34,7 @@ const LOAN_OPTIONS = [
 ];
 
 const initialInsuranceForm = {
+  _id: null,
   type: "",
   submissionDate: "",
   memberName: "",
@@ -50,6 +50,7 @@ const initialInsuranceForm = {
 };
 
 const initialInvestmentForm = {
+  _id: null,
   type: "",
   submissionDate: "",
   memberName: "",
@@ -63,6 +64,7 @@ const initialInvestmentForm = {
 };
 
 const initialLoanForm = {
+  _id: null,
   type: "",
   submissionDate: "",
   memberName: "",
@@ -77,8 +79,9 @@ const initialLoanForm = {
   document: null,
 };
 
-const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProspectCreated }) => {
+const FinancialInformationFormForProspect = ({ clientId, clientData, onClientCreated }) => {
   const dispatch = useDispatch();
+  const { financialInfo, loading, error } = useSelector((state) => state.client || {});
 
   const [openInsurance, setOpenInsurance] = useState([]);
   const [openInvestments, setOpenInvestments] = useState([]);
@@ -92,18 +95,51 @@ const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProsp
   const [investmentFormData, setInvestmentFormData] = useState({});
   const [loanFormData, setLoanFormData] = useState({});
 
+  const [insuranceFiles, setInsuranceFiles] = useState({});
+  const [investmentFiles, setInvestmentFiles] = useState({});
+  const [loanFiles, setLoanFiles] = useState({});
 
+  const [familyMembers, setFamilyMembers] = useState([]);
 
+  useEffect(() => {
+    const fetchClientData = async () => {
+      try {
+        if (!clientId) return;
+        const response = await fetch(`https://vpfinance2.onrender.com/api/client/${clientId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const result = await response.json();
+        if (result.success) {
+          setFamilyMembers(result.client.familyMembers || []);
+          // Prepopulate forms with existing financial info
+          if (result.client.financialInfo) {
+            setInsuranceForms(result.client.financialInfo.insurance || []);
+            setInvestmentForms(result.client.financialInfo.investments || []);
+            setLoanForms(result.client.financialInfo.loans || []);
+          }
+        } else {
+          toast.error(result.message || "Failed to load client data.");
+        }
+      } catch (error) {
+        console.error("Error fetching client data:", error);
+        toast.error("Error loading client data. Check your network.");
+      }
+    };
 
+    fetchClientData();
+  }, [clientId]);
 
-  const handleCheckboxChange = (option, group) => {
+  const handleCheckboxChange = (option, group, existingData = null) => {
     if (group === "insurance") {
       setOpenInsurance((prev) =>
         prev.includes(option) ? prev.filter((v) => v !== option) : [...prev, option]
       );
       setInsuranceFormData((prev) => ({
         ...prev,
-        [option]: { ...initialInsuranceForm, type: option },
+        [option]: existingData || { ...initialInsuranceForm, type: option },
       }));
     }
     if (group === "investment") {
@@ -112,7 +148,7 @@ const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProsp
       );
       setInvestmentFormData((prev) => ({
         ...prev,
-        [option]: { ...initialInvestmentForm, type: option },
+        [option]: existingData || { ...initialInvestmentForm, type: option },
       }));
     }
     if (group === "loan") {
@@ -121,7 +157,7 @@ const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProsp
       );
       setLoanFormData((prev) => ({
         ...prev,
-        [option]: { ...initialLoanForm, type: option },
+        [option]: existingData || { ...initialLoanForm, type: option },
       }));
     }
   };
@@ -147,17 +183,46 @@ const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProsp
     }
   };
 
+  const handleFileChange = (option, group, files) => {
+    if (group === "insurance") {
+      setInsuranceFiles((prev) => ({
+        ...prev,
+        [option]: files ? Array.from(files) : [],
+      }));
+    }
+    if (group === "investment") {
+      setInvestmentFiles((prev) => ({
+        ...prev,
+        [option]: files ? Array.from(files) : [],
+      }));
+    }
+    if (group === "loan") {
+      setLoanFiles((prev) => ({
+        ...prev,
+        [option]: files ? Array.from(files) : [],
+      }));
+    }
+  };
 
-  
   const handleSaveForm = (option, group) => {
     if (group === "insurance") {
       const formData = { ...insuranceFormData[option] };
-      if (!formData.document) {
-        formData.document = null;
-      }
-      setInsuranceForms((prev) => [...prev, formData]);
+      setInsuranceForms((prev) => {
+        const existingIndex = prev.findIndex((item) => item._id === formData._id);
+        if (existingIndex >= 0) {
+          const updatedForms = [...prev];
+          updatedForms[existingIndex] = formData;
+          return updatedForms;
+        }
+        return [...prev, formData];
+      });
       setOpenInsurance((prev) => prev.filter((v) => v !== option));
       setInsuranceFormData((prev) => {
+        const copy = { ...prev };
+        delete copy[option];
+        return copy;
+      });
+      setInsuranceFiles((prev) => {
         const copy = { ...prev };
         delete copy[option];
         return copy;
@@ -165,12 +230,22 @@ const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProsp
     }
     if (group === "investment") {
       const formData = { ...investmentFormData[option] };
-      if (!formData.document) {
-        formData.document = null;
-      }
-      setInvestmentForms((prev) => [...prev, formData]);
+      setInvestmentForms((prev) => {
+        const existingIndex = prev.findIndex((item) => item._id === formData._id);
+        if (existingIndex >= 0) {
+          const updatedForms = [...prev];
+          updatedForms[existingIndex] = formData;
+          return updatedForms;
+        }
+        return [...prev, formData];
+      });
       setOpenInvestments((prev) => prev.filter((v) => v !== option));
       setInvestmentFormData((prev) => {
+        const copy = { ...prev };
+        delete copy[option];
+        return copy;
+      });
+      setInvestmentFiles((prev) => {
         const copy = { ...prev };
         delete copy[option];
         return copy;
@@ -178,12 +253,22 @@ const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProsp
     }
     if (group === "loan") {
       const formData = { ...loanFormData[option] };
-      if (!formData.document) {
-        formData.document = null;
-      }
-      setLoanForms((prev) => [...prev, formData]);
+      setLoanForms((prev) => {
+        const existingIndex = prev.findIndex((item) => item._id === formData._id);
+        if (existingIndex >= 0) {
+          const updatedForms = [...prev];
+          updatedForms[existingIndex] = formData;
+          return updatedForms;
+        }
+        return [...prev, formData];
+      });
       setOpenLoans((prev) => prev.filter((v) => v !== option));
       setLoanFormData((prev) => {
+        const copy = { ...prev };
+        delete copy[option];
+        return copy;
+      });
+      setLoanFiles((prev) => {
         const copy = { ...prev };
         delete copy[option];
         return copy;
@@ -199,10 +284,20 @@ const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProsp
         delete copy[option];
         return copy;
       });
+      setInsuranceFiles((prev) => {
+        const copy = { ...prev };
+        delete copy[option];
+        return copy;
+      });
     }
     if (group === "investment") {
       setOpenInvestments((prev) => prev.filter((v) => v !== option));
       setInvestmentFormData((prev) => {
+        const copy = { ...prev };
+        delete copy[option];
+        return copy;
+      });
+      setInvestmentFiles((prev) => {
         const copy = { ...prev };
         delete copy[option];
         return copy;
@@ -215,45 +310,83 @@ const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProsp
         delete copy[option];
         return copy;
       });
+      setLoanFiles((prev) => {
+        const copy = { ...prev };
+        delete copy[option];
+        return copy;
+      });
     }
   };
 
-  // const handleFileChange = (option, group, file) => {
-  //   handleFormChange(option, group, "document", file);
-  // };
-
-  const handleFileChange = (option, group, file) => {
-  if (file) {
-    handleFormChange(option, group, "document", file);
-  } else {
-    handleFormChange(option, group, "document", null);
-  }
-};
-
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e, isUpdate = false) => {
     e.preventDefault();
-    const financialData = {
-      insurance: insuranceForms,
-      investments: investmentForms,
-      loans: loanForms,
-    };
-    
-    const idToUse = prospectData && prospectData._id || prospectId;
-  
-    const result = await dispatch(addFinancialInfo({ prospectId:idToUse, financialData }));
-    if(result){
-    setInsuranceForms([]);
-    setInvestmentForms([]);
-    setLoanForms([]);
-    toast.info("Financial Information Added Successfully....")
-    const prospectIdFromRedux = result?.payload;
-    if (onProspectCreated && prospectIdFromRedux) onProspectCreated(prospectIdFromRedux);
+
+    try {
+      const financialData = {
+        insurance: insuranceForms,
+        investments: investmentForms,
+        loans: loanForms,
+      };
+
+      const files = {
+        insuranceDocuments: Object.values(insuranceFiles).flat(),
+        investmentDocuments: Object.values(investmentFiles).flat(),
+        loanDocuments: Object.values(loanFiles).flat(),
+      };
+
+      const idToUse = clientData?._id || clientId;
+      if (!idToUse) {
+        toast.error("Client ID is missing.");
+        return;
+      }
+
+      const action = isUpdate
+        ? await dispatch(updateFinancialInfo({ clientId: idToUse, financialData, files }))
+        : await dispatch(addFinancialInfo({ clientId: idToUse, financialData, files }));
+
+      if (isUpdate ? updateFinancialInfo.fulfilled.match(action) : addFinancialInfo.fulfilled.match(action)) {
+        setInsuranceForms([]);
+        setInvestmentForms([]);
+        setLoanForms([]);
+        setInsuranceFiles({});
+        setInvestmentFiles({});
+        setLoanFiles({});
+        toast.success(action.payload.message);
+        if (!isUpdate && onClientCreated && action.payload.clientId) {
+          onClientCreated(action.payload.clientId);
+        }
+      } else {
+        toast.error(action.payload || "Failed to save financial information.");
+      }
+    } catch (error) {
+      console.error(`Error ${isUpdate ? "updating" : "adding"} financial data:`, error);
+      toast.error(`Failed to ${isUpdate ? "update" : "add"} financial information. Please try again.`);
+    }
+  };
+
+  const getCurrentDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const handleEditForm = (item, group) => {
+    const option = item.type;
+    if (group === "insurance") {
+      handleCheckboxChange(option, "insurance", { ...item, document: null });
+    }
+    if (group === "investment") {
+      handleCheckboxChange(option, "investment", { ...item, document: null });
+    }
+    if (group === "loan") {
+      handleCheckboxChange(option, "loan", { ...item, document: null });
     }
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <Form onSubmit={(e) => handleSubmit(e, false)}>
       <Row className="mb-3">
         <Col md={4}>
           <Form.Group>
@@ -269,6 +402,15 @@ const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProsp
               />
             ))}
           </Form.Group>
+          <h6 className="mt-3">Saved Insurance</h6>
+          {insuranceForms.map((item, index) => (
+            <div key={index} className="border p-2 mb-2">
+              <p>{item.type} - {item.memberName} - {item.policyNumber}</p>
+              <Button size="sm" onClick={() => handleEditForm(item, "insurance")}>
+                Edit
+              </Button>
+            </div>
+          ))}
         </Col>
         <Col md={4}>
           <Form.Group>
@@ -284,6 +426,15 @@ const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProsp
               />
             ))}
           </Form.Group>
+          <h6 className="mt-3">Saved Investments</h6>
+          {investmentForms.map((item, index) => (
+            <div key={index} className="border p-2 mb-2">
+              <p>{item.type} - {item.memberName} - {item.financialProduct}</p>
+              <Button size="sm" onClick={() => handleEditForm(item, "investment")}>
+                Edit
+              </Button>
+            </div>
+          ))}
         </Col>
         <Col md={4}>
           <Form.Group>
@@ -299,6 +450,15 @@ const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProsp
               />
             ))}
           </Form.Group>
+          <h6 className="mt-3">Saved Loans</h6>
+          {loanForms.map((item, index) => (
+            <div key={index} className="border p-2 mb-2">
+              <p>{item.type} - {item.memberName} - {item.loanAccountNumber}</p>
+              <Button size="sm" onClick={() => handleEditForm(item, "loan")}>
+                Edit
+              </Button>
+            </div>
+          ))}
         </Col>
       </Row>
 
@@ -312,7 +472,7 @@ const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProsp
                 <Form.Label>Submission Date</Form.Label>
                 <Form.Control
                   type="date"
-                  value={insuranceFormData[option]?.submissionDate || ""}
+                  value={insuranceFormData[option]?.submissionDate || getCurrentDate()}
                   onChange={(e) =>
                     handleFormChange(option, "insurance", "submissionDate", e.target.value)
                   }
@@ -323,14 +483,21 @@ const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProsp
             <Col md={4}>
               <Form.Group>
                 <Form.Label>Member Name</Form.Label>
-                <Form.Control
-                  type="text"
+                <Form.Select
+                  name="memberName"
                   value={insuranceFormData[option]?.memberName || ""}
                   onChange={(e) =>
                     handleFormChange(option, "insurance", "memberName", e.target.value)
                   }
                   required
-                />
+                >
+                  <option value="">Select Member Name</option>
+                  {familyMembers.map((member) => (
+                    <option key={member._id} value={member.name}>
+                      {member.name}
+                    </option>
+                  ))}
+                </Form.Select>
               </Form.Group>
             </Col>
             <Col md={4}>
@@ -388,14 +555,20 @@ const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProsp
             <Col md={4}>
               <Form.Group>
                 <Form.Label>Mode</Form.Label>
-                <Form.Control
-                  type="text"
+                <Form.Select
                   value={insuranceFormData[option]?.mode || ""}
                   onChange={(e) =>
                     handleFormChange(option, "insurance", "mode", e.target.value)
                   }
                   required
-                />
+                >
+                  <option value="">Select Mode</option>
+                  <option value="Monthly">Monthly</option>
+                  <option value="Quarterly">Quarterly</option>
+                  <option value="Half Yearly">Half Yearly</option>
+                  <option value="Yearly">Yearly</option>
+                  <option value="Single Premium">Single Premium</option>
+                </Form.Select>
               </Form.Group>
             </Col>
             <Col md={4}>
@@ -437,32 +610,17 @@ const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProsp
                 />
               </Form.Group>
             </Col>
-            {/* <Col md={6}>
+            <Col md={6}>
               <Form.Group>
-                <Form.Label>Upload Document</Form.Label>
+                <Form.Label>Upload Documents (up to 10)</Form.Label>
                 <Form.Control
                   type="file"
-                  onChange={(e) =>
-                    handleFileChange(option, "insurance", e.target.files[0])
-                  }
+                  multiple
+                  accept="image/jpeg,image/png,image/gif,image/avif,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,text/plain"
+                  onChange={(e) => handleFileChange(option, "insurance", e.target.files)}
                 />
               </Form.Group>
-            </Col> */}
-            <Col md={6}>
-  <Form.Group>
-    <Form.Label>Upload Document</Form.Label>
-    <Form.Control
-      type="file"
-      onChange={(e) => {
-        if (e.target.files && e.target.files.length > 0) {
-          handleFileChange(option, "insurance", e.target.files[0]);
-        } else {
-          handleFileChange(option, "insurance", null);
-        }
-      }}
-    />
-  </Form.Group>
-</Col>
+            </Col>
           </Row>
           <Button
             variant="primary"
@@ -491,7 +649,7 @@ const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProsp
                 <Form.Label>Submission Date</Form.Label>
                 <Form.Control
                   type="date"
-                  value={investmentFormData[option]?.submissionDate || ""}
+                  value={investmentFormData[option]?.submissionDate || getCurrentDate()}
                   onChange={(e) =>
                     handleFormChange(option, "investment", "submissionDate", e.target.value)
                   }
@@ -502,14 +660,21 @@ const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProsp
             <Col md={4}>
               <Form.Group>
                 <Form.Label>Member Name</Form.Label>
-                <Form.Control
-                  type="text"
+                <Form.Select
+                  name="memberName"
                   value={investmentFormData[option]?.memberName || ""}
                   onChange={(e) =>
                     handleFormChange(option, "investment", "memberName", e.target.value)
                   }
                   required
-                />
+                >
+                  <option value="">Select Member Name</option>
+                  {familyMembers.map((member) => (
+                    <option key={member._id} value={member.name}>
+                      {member.name}
+                    </option>
+                  ))}
+                </Form.Select>
               </Form.Group>
             </Col>
             <Col md={4}>
@@ -590,32 +755,17 @@ const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProsp
                 />
               </Form.Group>
             </Col>
-            {/* <Col md={6}>
+            <Col md={6}>
               <Form.Group>
-                <Form.Label>Upload Document</Form.Label>
+                <Form.Label>Upload Documents (up to 10)</Form.Label>
                 <Form.Control
                   type="file"
-                  onChange={(e) =>
-                    handleFileChange(option, "investment", e.target.files[0])
-                  }
+                  multiple
+                  accept="image/jpeg,image/png,image/gif,image/avif,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,text/plain"
+                  onChange={(e) => handleFileChange(option, "investment", e.target.files)}
                 />
               </Form.Group>
-            </Col> */}
-            <Col md={6}>
-  <Form.Group>
-    <Form.Label>Upload Document</Form.Label>
-    <Form.Control
-      type="file"
-      onChange={(e) => {
-        if (e.target.files && e.target.files.length > 0) {
-          handleFileChange(option, "investment", e.target.files[0]);
-        } else {
-          handleFileChange(option, "investment", null);
-        }
-      }}
-    />
-  </Form.Group>
-</Col>
+            </Col>
           </Row>
           <Button
             variant="primary"
@@ -644,7 +794,7 @@ const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProsp
                 <Form.Label>Submission Date</Form.Label>
                 <Form.Control
                   type="date"
-                  value={loanFormData[option]?.submissionDate || ""}
+                  value={loanFormData[option]?.submissionDate || getCurrentDate()}
                   onChange={(e) =>
                     handleFormChange(option, "loan", "submissionDate", e.target.value)
                   }
@@ -655,14 +805,21 @@ const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProsp
             <Col md={4}>
               <Form.Group>
                 <Form.Label>Member Name</Form.Label>
-                <Form.Control
-                  type="text"
+                <Form.Select
+                  name="memberName"
                   value={loanFormData[option]?.memberName || ""}
                   onChange={(e) =>
                     handleFormChange(option, "loan", "memberName", e.target.value)
                   }
                   required
-                />
+                >
+                  <option value="">Select Member Name</option>
+                  {familyMembers.map((member) => (
+                    <option key={member._id} value={member.name}>
+                      {member.name}
+                    </option>
+                  ))}
+                </Form.Select>
               </Form.Group>
             </Col>
             <Col md={4}>
@@ -722,6 +879,7 @@ const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProsp
                 <Form.Label>Interest Rate (%)</Form.Label>
                 <Form.Control
                   type="number"
+                  step="0.01"
                   value={loanFormData[option]?.interestRate || ""}
                   onChange={(e) =>
                     handleFormChange(option, "loan", "interestRate", e.target.value)
@@ -735,6 +893,7 @@ const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProsp
                 <Form.Label>Term</Form.Label>
                 <Form.Control
                   type="text"
+                  placeholder="e.g., 5 years, 60 months"
                   value={loanFormData[option]?.term || ""}
                   onChange={(e) =>
                     handleFormChange(option, "loan", "term", e.target.value)
@@ -769,34 +928,17 @@ const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProsp
                 />
               </Form.Group>
             </Col>
-            {/* <Col md={6}>
+            <Col md={6}>
               <Form.Group>
-                <Form.Label>Upload Document</Form.Label>
+                <Form.Label>Upload Documents (up to 10)</Form.Label>
                 <Form.Control
                   type="file"
-                  onChange={(e) =>
-                    handleFileChange(option, "loan", e.target.files[0])
-                  }
+                  multiple
+                  accept="image/jpeg,image/png,image/gif,image/avif,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,text/plain"
+                  onChange={(e) => handleFileChange(option, "loan", e.target.files)}
                 />
               </Form.Group>
-            </Col> */}
-
-            <Col md={6}>
-  <Form.Group>
-    <Form.Label>Upload Document</Form.Label>
-    <Form.Control
-      type="file"
-      onChange={(e) => {
-        if (e.target.files && e.target.files.length > 0) {
-          handleFileChange(option, "loan", e.target.files[0]);
-        } else {
-          handleFileChange(option, "loan", null);
-        }
-      }}
-    />
-  </Form.Group>
-</Col>
-
+            </Col>
           </Row>
           <Button
             variant="primary"
@@ -815,11 +957,18 @@ const FinancialInformationFormForProspect = ({ prospectId, prospectData, onProsp
         </div>
       ))}
 
-      <Button type="submit" className="btn btn-primary">
-        Submit All
+      <Button type="submit" className="btn btn-primary mt-3 me-2">
+        Add Financial Info
+      </Button>
+      <Button
+        type="button"
+        className="btn btn-primary mt-3"
+        onClick={(e) => handleSubmit(e, true)}
+      >
+        Update Financial Info
       </Button>
     </Form>
   );
 };
 
-export default FinancialInformationFormForProspect;
+export default FinancialInformationFormForProspect

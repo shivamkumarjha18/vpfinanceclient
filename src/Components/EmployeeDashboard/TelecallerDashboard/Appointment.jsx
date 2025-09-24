@@ -4,16 +4,16 @@ import React from "react";
 const AppointmentComponent = () => {
   const appointments = [
     {
-      id: 0,
-      name: "Pradumn Goswami",
-      mobile: "7415669067",
-      organisation: "Freelancer",
-      designation: "Developer",
-      address: "Govind garden hno 53, Anmol Homes, Raisen",
-      area: "BHOPAL",
-      purpose: "Portfolio",
-      remark: "Appointment Done!",
-      date: "2024-06-22",
+      // id: 0,
+      // name: "Pradumn Goswami",
+      // mobile: "7415669067",
+      // organisation: "Freelancer",
+      // designation: "Developer",
+      // address: "Govind garden hno 53, Anmol Homes, Raisen",
+      // area: "BHOPAL",
+      // purpose: "Portfolio",
+      // remark: "Appointment Done!",
+      // date: "2024-06-22",
     },
   ];
 

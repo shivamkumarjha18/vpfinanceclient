@@ -180,7 +180,14 @@ import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Layout from "../Layout/Layout";
 import DashboardCards from "../Components/Dashbord/DashboardCards";
+import ActiveLeadsPage from "../Components/EmployeeDashboard/TelecallerDashboard/ActiveLeadsPage"
+import BusyOnAnotherCallPage from "../Components/EmployeeDashboard/TelecallerDashboard/BusyOnAnotherCallPage"
+import CallAfterSomeTimePage from "../Components/EmployeeDashboard/TelecallerDashboard/CallAfterSomeTimePage"
+import CallNotPickedPage from "../Components/EmployeeDashboard/TelecallerDashboard/CallNotPickedPage"
+import OthersLeadsPage from "../Components/EmployeeDashboard/TelecallerDashboard/OthersLeadsPage"
 import AppointmentComponent from "../Components/EmployeeDashboard/TelecallerDashboard/Appointment";
+import BalanceLeadsPage from "../Components/EmployeeDashboard/TelecallerDashboard/BalanceLeadsPage";
+import CallingDonePage from "../Components/EmployeeDashboard/TelecallerDashboard/CallingDonePage";
 // Master Components
 import Composite from "../Components/Masters/Composite/Composite";
 import Area from "../Components/Masters/Leads/Area";
@@ -192,7 +199,7 @@ import ServicingTask from "../Components/Masters/Servicing/ServicingTask";
 import LeadType from "../Components/Masters/Leads/LeadType";
 import LeadOccupation from "../Components/Masters/Leads/LeadOccupation";
 import OccupationType from "../Components/Masters/Leads/OccupationType";
-
+import SuspectEditWrapper from "../Components/EmployeeDashboard/TelecallerDashboard/SuspectEditWrapper";
 // Customer Components
 import CustomerDetail from "../Components/Customer/Client/CustomerDetail";
 import ProspectDetail from "../Components/Customer/Prospect/ProspectDetail";
@@ -235,7 +242,12 @@ import LoginTelemarketer from "../pages/telemarketer/Login";
 import Login from "../pages/COMMONLOGIN/Login";
 import AddSuspect from "../Components/EmployeeDashboard/TelecallerDashboard/AddSuspect";
 import DashboardPage from "../Components/EmployeeDashboard/TelecallerDashboard/Dashboard";
-
+import ForwardedLeadsPage from "../Components/EmployeeDashboard/TelecallerDashboard/ForwardedLeadsPage";
+import RejectedLeadsPage from "../Components/EmployeeDashboard/TelecallerDashboard/RejectedLeadsPage";
+import AppointmentsDonePage  from "../Components/EmployeeDashboard/TelecallerDashboard/AppointmentsDonePage";
+import NotInterested from "../Components/EmployeeDashboard/TelecallerDashboard/NotInterested";
+import NotReachable from "../Components/EmployeeDashboard/TelecallerDashboard/NotReachable";
+import WrongNumber from "../Components/EmployeeDashboard/TelecallerDashboard/WrongNumber";
 // 🔒 ProtectedRoute Component (Strict Role Check)
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const token = localStorage.getItem("token");
@@ -256,6 +268,22 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 };
 
 const AppRoutes = () => {
+
+const suspectData = {
+    _id: "12345",
+    personalDetails: {
+      salutation: "Mr.",
+      groupName: "John Doe Family",
+      gender: "Male",
+      organisation: "ABC Corp",
+      // ... other data
+    }
+  };
+
+    const handleSuspectCreated = (suspectId) => {
+    console.log("Suspect created with ID:", suspectId);
+  };
+
   return (
     <Routes>
       {/* 🌍 Public Routes ONLY - Register & Login */}
@@ -272,18 +300,45 @@ const AppRoutes = () => {
       <Route path="/auth/login" element={<Login/>} />
 
       {/* 📞 TELECALLER - Only Telecaller Routes */}
-      <Route 
-        path="/telecaller" 
-        element={
-          <ProtectedRoute allowedRoles={["Telecaller"]}>
-            <TelecallerPanel />
-          </ProtectedRoute>
-        }
-      >
-        <Route path="dashboard" element={<DashboardPage />} />
-        <Route path="suspect/add" element={<AddSuspect />} />
-        <Route path="appointments" element={<AppointmentComponent/>} />
-      </Route>
+   <Route 
+  path="/telecaller" 
+  element={
+    <ProtectedRoute allowedRoles={["Telecaller"]}>
+      <TelecallerPanel />
+    </ProtectedRoute>
+  }
+>
+  <Route path="dashboard" element={<DashboardPage />} />
+  <Route path="suspect/add" element={<AddSuspect />} />
+  <Route path="suspect/edit/:id" element={<SuspectEditWrapper />} />
+  <Route path="balance-leads" element={<BalanceLeadsPage />} />
+  <Route path="calling-done" element={<CallingDonePage />} />
+  <Route path="forwarded-leads" element={<ForwardedLeadsPage/>} />
+  <Route path="rejected-leads" element={<RejectedLeadsPage />} />
+  <Route path="appointments-done" element={<AppointmentsDonePage />} /> 
+  <Route path="appointments" element={<AppointmentComponent />} /> 
+
+  {/* 🟢 Active Leads Parent */}
+  <Route   path="/telecaller/active" element={<ActiveLeadsPage />} />
+
+  {/* 🟢 Children of Active Leads */}
+  
+  <Route path="busy-on-another-call" element={<BusyOnAnotherCallPage />} />
+  <Route path="call-after-some-time" element={<CallAfterSomeTimePage />} />
+  <Route path="call-not-picked" element={<CallNotPickedPage />} />
+  <Route path="others" element={<OthersLeadsPage />} />
+    
+  <Route path="not-interested" element={<NotInterested />} />
+  <Route path="wrong-number" element={<WrongNumber />} />
+  <Route path="not-reachable" element={<NotReachable />} />
+</Route>
+
+{/* 
+ <Route   path="/telecaller/reject" element={<RejectedLeadsPage />} /> */}
+
+  {/* 🟢 Children of Active Leads */}
+
+
 
       {/* 🏢 OA (Office Admin) - Only OA can access Layout & all other routes */}
       <Route 

@@ -22,7 +22,7 @@ const gradeMap = {
   "2.5 to 5 lakh": 3,
 };
 
-const PersonalDetailsForm = ({ isEdit, clientData, onClientCreated,setFamilyDetail }) => {
+const PersonalDetailsForm = ({ isEdit, clientData, onClientCreated,setFamilyDetail,changeTab }) => {
   const dispatch = useDispatch();
   const initialFormState = {
     salutation: "",
@@ -271,7 +271,8 @@ useEffect(() => {
       if (resultAction) {
         toast.success("Client Created Successfully");
         setFamilyDetail(formData)
-        setFormData(initialFormState);
+        changeTab("family")
+        // setFormData(initialFormState);
         const clientId = resultAction?.payload;
         if (onClientCreated && clientId) onClientCreated(clientId);
       }
@@ -451,27 +452,26 @@ useEffect(() => {
   </Form.Group>
 </Col>
 
-        <Col md={3}>
-          <Form.Group controlId="contactNo">
-            <Form.Label>Phone No</Form.Label>
-            <Form.Control
-              name="contactNo"
-              type="text"
-              placeholder="Phone No"
-              maxLength={14}
+      <Col md={3}>
+  <Form.Group controlId="contactNo">
+    <Form.Label>Phone No</Form.Label>
+    <Form.Control
+      name="contactNo"
+      type="text"
+      placeholder="Phone No"
+      maxLength={14}
+      value={`0755${formData.contactNo ?? ""}`}  // 👈 prefix + stored number
+      onChange={(e) =>
+        setFormData({
+          ...formData,
+          contactNo: e.target.value.replace(/^0755/, ""), // 👈 store without prefix
+        })
+      }
+      size="sm"
+    />
+  </Form.Group>
+</Col>
 
-           value={`0755${formData.contactNo?.replace(/^0755/, "") ?? ""}`}
-              // onChange={handleMobileWhatsappChange}
-         onChange={(e) =>
-    setFormData({
-      ...formData,
-      contactNo: `0755${e.target.value.replace(/^0755/, "")}`, // ✅ ensure prefix stays
-    })
-  }
-              size="sm"
-            />
-          </Form.Group>
-        </Col>
         <Col md={3}>
           <Form.Group controlId="emailId">
             <Form.Label>Email Id</Form.Label>
@@ -924,7 +924,7 @@ useEffect(() => {
         </Col>
                 <Col md={3}>
           <Form.Group controlId="name">
-            <Form.Label>Purpose Name</Form.Label>
+            <Form.Label>Purpose name / Task name </Form.Label>
             <Form.Control
               name="name"
               type="text"

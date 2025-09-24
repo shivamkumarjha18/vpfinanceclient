@@ -9,15 +9,6 @@
 // import { getAllOccupationTypes } from "../../../redux/feature/OccupationType/OccupationThunx";
 // import { toast } from "react-toastify";
 
-// // Debounce function to limit API calls
-// const debounce = (func, delay) => {
-//   let timeoutId;
-//   return (...args) => {
-//     clearTimeout(timeoutId);
-//     timeoutId = setTimeout(() => func(...args), delay);
-//   };
-// };
-
 // const incomeOptions = [
 //   { value: "25 lakh to 1 Cr.", label: "25 lakh to 1 Cr." },
 //   { value: "5 to 25 lakh", label: "5 to 25 lakh" },
@@ -67,7 +58,6 @@
 //     leadName: "",
 //     leadOccupation: "",
 //     leadOccupationType: "",
-//     //leadPerson: "",
 //     callingPurpose: "",
 //     name: "",
 //     allocatedCRE: "",
@@ -114,41 +104,56 @@
 //     }
 //   }, [formData.preferredAddressType, formData.resiAddr, formData.officeAddr]);
 
-//   // Function to fetch location data based on pincode
-//   const fetchLocationData = async (pincode, addressType) => {
-//     if (!pincode || pincode.length !== 6) {
-//       return;
-//     }
+//   const fetchAreaData = async (pincode) => {
 //     try {
-//       const response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+//       const response = await fetch(`https://vpfinance2.onrender.com/api/leadarea?pincode=${pincode}`);
 //       const data = await response.json();
-//       if (data[0]?.Status === "Success" && data[0]?.PostOffice?.length > 0) {
-//         const { District: city, Name: area } = data[0].PostOffice[0];
+//       console.log("API Response:", data);
+
+//       if (data && Array.isArray(data)) {
+//         const area = data.find((item) => String(item.pincode) === String(pincode));
+
+//         if (area) {
+//           setFormData((prev) => ({
+//             ...prev,
+//             preferredMeetingArea: area.name || "",
+//             city: area.city || "",
+//           }));
+//         } else {
+//           setFormData((prev) => ({
+//             ...prev,
+//             preferredMeetingArea: "Area not found",
+//             city: "",
+//           }));
+//         }
+//       } else {
 //         setFormData((prev) => ({
 //           ...prev,
-//           city: city || prev.city,
-//           preferredMeetingArea: area || prev.preferredMeetingArea,
+//           preferredMeetingArea: "No data received",
+//           city: "",
 //         }));
-//         toast.success("Location details updated successfully");
-//       } else {
-//         toast.error("Invalid pincode or no location data found");
 //       }
 //     } catch (error) {
-//       toast.error("Failed to fetch location data");
-//       console.error("Error fetching pincode data:", error);
+//       console.error("Error fetching area data:", error);
+//       setFormData((prev) => ({
+//         ...prev,
+//         preferredMeetingArea: "Error fetching area",
+//         city: "",
+//       }));
 //     }
 //   };
 
-//   // Debounced version of fetchLocationData
-//   const debouncedFetchLocation = debounce(fetchLocationData, 500);
+//   useEffect(() => {
+//     if (formData.resiPincode?.length === 6 || formData.officePincode?.length === 6) {
+//       fetchAreaData(formData.resiPincode || formData.officePincode);
+//     }
+//   }, [formData.resiPincode, formData.officePincode]);
 
 //   const handleChange = (e) => {
 //     const { name, value } = e.target;
 //     setFormData((prev) => ({ ...prev, [name]: value }));
-
-//     // Trigger location fetch for pincode fields
-//     if (name === "resiPincode" || name === "officePincode") {
-//       debouncedFetchLocation(value, name === "resiPincode" ? "resi" : "office");
+//     if ((name === "resiPincode" || name === "officePincode") && value.length === 6) {
+//       fetchAreaData(value);
 //     }
 //   };
 
@@ -208,11 +213,11 @@
 //         </Col>
 //         <Col md={5}>
 //           <Form.Group controlId="groupName">
-//             <Form.Label>Group Name</Form.Label>
+//             <Form.Label>Group Head</Form.Label>
 //             <Form.Control
 //               name="groupName"
 //               type="text"
-//               placeholder="Group Name"
+//               placeholder="Group Head"
 //               value={formData.groupName ?? ""}
 //               onChange={handleChange}
 //               size="sm"
@@ -312,19 +317,6 @@
 //           </Form.Group>
 //         </Col>
 //         <Col md={3}>
-//           <Form.Group controlId="contactNo">
-//             <Form.Label>Contact No</Form.Label>
-//             <Form.Control
-//               name="contactNo"
-//               type="text"
-//               placeholder="Contact No"
-//               value={formData.contactNo ?? ""}
-//               onChange={handleChange}
-//               size="sm"
-//             />
-//           </Form.Group>
-//         </Col>
-//         <Col md={3}>
 //           <Form.Group controlId="whatsappNo">
 //             <Form.Label>Whatsapp No</Form.Label>
 //             <Form.Control
@@ -332,6 +324,19 @@
 //               type="text"
 //               placeholder="Whatsapp No"
 //               value={formData.whatsappNo ?? ""}
+//               onChange={handleChange}
+//               size="sm"
+//             />
+//           </Form.Group>
+//         </Col>
+//         <Col md={3}>
+//           <Form.Group controlId="contactNo">
+//             <Form.Label>Contact No</Form.Label>
+//             <Form.Control
+//               name="contactNo"
+//               type="text"
+//               placeholder="Contact No"
+//               value={formData.contactNo ?? ""}
 //               onChange={handleChange}
 //               size="sm"
 //             />
@@ -380,7 +385,7 @@
 //         </Col>
 //         <Col md={3}>
 //           <Form.Group controlId="adharNumber">
-//             <Form.Label>Aadhar Number</Form.Label>
+//             <Form.Label>Aadhar No</Form.Label>
 //             <Form.Control
 //               name="adharNumber"
 //               type="text"
@@ -393,7 +398,7 @@
 //         </Col>
 //         <Col md={3}>
 //           <Form.Group controlId="panCardNumber">
-//             <Form.Label>PAN Card Number</Form.Label>
+//             <Form.Label>PAN Card No</Form.Label>
 //             <Form.Control
 //               name="panCardNumber"
 //               type="text"
@@ -415,9 +420,9 @@
 //             onChange={() => handleAddressTypeChange("resi")}
 //           />
 //         </Col>
-//         <Col md={4}>
+//         <Col md={6}>
 //           <Form.Group controlId="resiAddr">
-//             <Form.Label>Residential Address</Form.Label>
+//             <Form.Label>Address</Form.Label>
 //             <Form.Control
 //               name="resiAddr"
 //               type="text"
@@ -428,9 +433,9 @@
 //             />
 //           </Form.Group>
 //         </Col>
-//         <Col md={4}>
+//         <Col md={3}>
 //           <Form.Group controlId="resiLandmark">
-//             <Form.Label>Residential Landmark</Form.Label>
+//             <Form.Label>Landmark</Form.Label>
 //             <Form.Control
 //               name="resiLandmark"
 //               type="text"
@@ -441,9 +446,9 @@
 //             />
 //           </Form.Group>
 //         </Col>
-//         <Col md={3}>
+//         <Col md={2}>
 //           <Form.Group controlId="resiPincode">
-//             <Form.Label>Residential Pincode</Form.Label>
+//             <Form.Label>Pincode</Form.Label>
 //             <Form.Control
 //               name="resiPincode"
 //               type="text"
@@ -465,9 +470,9 @@
 //             onChange={() => handleAddressTypeChange("office")}
 //           />
 //         </Col>
-//         <Col md={4}>
+//         <Col md={6}>
 //           <Form.Group controlId="officeAddr">
-//             <Form.Label>Office Address</Form.Label>
+//             <Form.Label>Address</Form.Label>
 //             <Form.Control
 //               name="officeAddr"
 //               type="text"
@@ -478,9 +483,9 @@
 //             />
 //           </Form.Group>
 //         </Col>
-//         <Col md={4}>
+//         <Col md={3}>
 //           <Form.Group controlId="officeLandmark">
-//             <Form.Label>Office Landmark</Form.Label>
+//             <Form.Label>Landmark</Form.Label>
 //             <Form.Control
 //               name="officeLandmark"
 //               type="text"
@@ -491,9 +496,9 @@
 //             />
 //           </Form.Group>
 //         </Col>
-//         <Col md={3}>
+//         <Col md={2}>
 //           <Form.Group controlId="officePincode">
-//             <Form.Label>Office Pincode</Form.Label>
+//             <Form.Label>Pincode</Form.Label>
 //             <Form.Control
 //               name="officePincode"
 //               type="text"
@@ -506,7 +511,7 @@
 //         </Col>
 //       </Row>
 //       <Row className="mb-4">
-//         <Col md={4}>
+//         <Col md={5}>
 //           <Form.Group controlId="preferredMeetingAddr">
 //             <Form.Label>Preferred Meeting Address</Form.Label>
 //             <Form.Control
@@ -520,7 +525,7 @@
 //             />
 //           </Form.Group>
 //         </Col>
-//         <Col md={4}>
+//         <Col md={2}>
 //           <Form.Group controlId="preferredMeetingArea">
 //             <Form.Label>Preferred Meeting Area</Form.Label>
 //             <Form.Control
@@ -530,10 +535,11 @@
 //               value={formData.preferredMeetingArea ?? ""}
 //               onChange={handleChange}
 //               size="sm"
+//               readOnly
 //             />
 //           </Form.Group>
 //         </Col>
-//         <Col md={4}>
+//         <Col md={2}>
 //           <Form.Group controlId="city">
 //             <Form.Label>City</Form.Label>
 //             <Form.Control
@@ -543,12 +549,11 @@
 //               value={formData.city ?? ""}
 //               onChange={handleChange}
 //               size="sm"
+//               readOnly
 //             />
 //           </Form.Group>
 //         </Col>
-//       </Row>
-//       <Row className="mb-4">
-//         <Col md={4}>
+//         <Col md={3}>
 //           <Form.Group controlId="bestTime">
 //             <Form.Label>Best Time</Form.Label>
 //             <Form.Select
@@ -563,7 +568,9 @@
 //             </Form.Select>
 //           </Form.Group>
 //         </Col>
-//         <Col md={4}>
+//       </Row>
+//       <Row className="mb-4">
+//         <Col md={3}>
 //           <Form.Group controlId="hobbies">
 //             <Form.Label>Hobbies</Form.Label>
 //             <Form.Control
@@ -576,7 +583,7 @@
 //             />
 //           </Form.Group>
 //         </Col>
-//         <Col md={4}>
+//         <Col md={3}>
 //           <Form.Group controlId="nativePlace">
 //             <Form.Label>Native Place</Form.Label>
 //             <Form.Control
@@ -589,9 +596,7 @@
 //             />
 //           </Form.Group>
 //         </Col>
-//       </Row>
-//       <Row className="mb-4">
-//         <Col md={4}>
+//         <Col md={3}>
 //           <Form.Group controlId="socialLink">
 //             <Form.Label>Social Link</Form.Label>
 //             <Form.Control
@@ -604,7 +609,7 @@
 //             />
 //           </Form.Group>
 //         </Col>
-//         <Col md={4}>
+//         <Col md={3}>
 //           <Form.Group controlId="habits">
 //             <Form.Label>Habits</Form.Label>
 //             <Form.Control
@@ -617,96 +622,135 @@
 //             />
 //           </Form.Group>
 //         </Col>
-//         <Col md={4}>
-//           <Form.Group controlId="leadSource">
-//             <Form.Label>Lead Source</Form.Label>
-//             <Form.Select
-//               name="leadSource"
-//               value={formData.leadSource ?? ""}
-//               onChange={handleChange}
-//               size="sm"
-//             >
-//               <option value="">Select Lead Source</option>
-//               {leadsourceDetail?.map((item) => (
-//                 <option key={item._id} value={item.leadType}>
-//                   {item.leadType}
-//                 </option>
-//               ))}
-//             </Form.Select>
-//           </Form.Group>
-//         </Col>
 //       </Row>
 //       <Row className="mb-4">
-//         <Col md={4}>
-//           <Form.Group controlId="leadName">
-//             <Form.Label>Lead Name</Form.Label>
-//             <Form.Control
-//               name="leadName"
-//               type="text"
-//               placeholder="Lead Name"
-//               value={formData.leadName ?? ""}
-//               onChange={handleChange}
-//               size="sm"
-//             />
-//           </Form.Group>
-//         </Col>
-//         <Col md={4}>
-//           <Form.Group controlId="leadOccupation">
-//            {/* <Form.Label>Lead Occupation</Form.Label>    */}
-//            <Form.Label>Lead Type</Form.Label>  
-
-//             <Form.Select
-//               name="leadOccupation"
-//               value={formData.leadOccupation ?? ""}
-//               onChange={handleChange}
-//               size="sm"
-//             >
-//                 {/* <option value="">Select Lead Occupation</option>      */}
-//              <option value="">Select Lead Type</option>    
-
-//               {alldetails && alldetails.map((item) => (
-//                 <option key={item._id} value={item.leadOccupation}>
-//                   {item.leadOccupation}
-//                 </option>
-//               ))}
-//             </Form.Select>
-//           </Form.Group>
-//         </Col>
-//         <Col md={4}>
-//           <Form.Group controlId="leadOccupationType">
-//             <Form.Label>Lead Occupation Type</Form.Label>
-//             <Form.Select
-//               name="leadOccupationType"
-//               value={formData.leadOccupationType ?? ""}
-//               onChange={handleChange}
-//               size="sm"
-//             >
-//               <option value="">Select Lead Occupation Type</option>
-//               {alldetailsForTypes && alldetailsForTypes.map((item) => (
-//                 <option key={item._id} value={item.occupationType}>
-//                   {item.occupationType}
-//                 </option>
-//               ))}
-//             </Form.Select>
-//           </Form.Group>
-//         </Col>
+//         <Col md={3}>
+//                   <Form.Group controlId="leadSource">
+//                     <Form.Label>Lead Source</Form.Label>
+//                     <Form.Select
+//                       name="leadSource"
+//                       value={formData.leadSource ?? ""}
+//                       onChange={handleChange}
+//                       size="sm"
+//                     >
+//                       <option value="">Select Lead Source</option>
+//                       <option value="Referred">Referred</option>
+//                       <option value="Digital Platform">Digital Platform</option>
+//                       <option value="Employee">Employee</option>
+//                       <option value="Business Associate">Business Associate</option>
+//                       <option value="Internship">Internship</option>
+//                       <option value="Direct">Direct</option>
+//                     </Form.Select>
+//                   </Form.Group>
+//                 </Col>
+//                 <Col md={3}>
+//                   <Form.Group controlId="leadName">
+//                     <Form.Label>Lead Name</Form.Label>
+//                     <Form.Control
+//                       name="leadName"
+//                       type="text"
+//                       placeholder="Lead Name"
+//                       value={formData.leadName ?? ""}
+//                       onChange={handleChange}
+//                       size="sm"
+//                     />
+//                   </Form.Group>
+//                 </Col>
+//                 <Col md={3}>
+//                   <Form.Group controlId="leadOccupation">
+//                     <Form.Label>Lead Occupation</Form.Label>
+//                     <Form.Select
+//                       name="leadOccupation"
+//                       value={formData.leadOccupation ?? ""}
+//                       onChange={handleChange}
+//                       size="sm"
+//                     >
+//                       <option value="">Select Lead Occupation</option>
+//                       <option value="Businessman">Businessman</option>
+//                       <option value="Govt.Service">Govt.Service</option>
+//                       <option value="Private Service">Private Service</option>
+//                       <option value="Retired">Retired</option>
+//                     </Form.Select>
+//                   </Form.Group>
+//                 </Col>
+//                 <Col md={3}>
+//                   <Form.Group controlId="leadOccupationType">
+//                     <Form.Label>Lead Occupation Type</Form.Label>
+//                     <Form.Select
+//                       name="leadOccupationType"
+//                       value={formData.leadOccupationType ?? ""}
+//                       onChange={handleChange}
+//                       size="sm"
+//                     >
+//                       <option value="">Select Lead Occupation Type</option>
+//                       <option value="CA">CA</option>
+//                       <option value="Jwellars">Jwellars</option>
+//                       <option value="Iron Merchant">Iron Merchant</option>
+//                       <option value="Kirana Merchant">Kirana Merchant</option>
+//                       <option value="Sugar Tredars">Sugar Tredars</option>
+//                       <option value="Cloth Merchant">Cloth Merchant</option>
+//                       <option value="Whole Sale Stationary">Whole Sale Stationary</option>
+//                       <option value="Tent & Lighte">Tent & Lighte</option>
+//                       <option value="Pan Masala Merchant">Pan Masala Merchant</option>
+//                       <option value="Bartan Merchant">Bartan Merchant</option>
+//                       <option value="Paper Traders">Paper Traders</option>
+//                       <option value="Restorent Ownar">Restorent Ownar</option>
+//                       <option value="Hotel Ownar">Hotel Ownar</option>
+//                       <option value="Electronics Shop Owner">Electronics Shop Owner</option>
+//                       <option value="Electricals Shop Owner">Electricals Shop Owner</option>
+//                       <option value="Tyre Dealers">Tyre Dealers</option>
+//                       <option value="Tea Merchents">Tea Merchents</option>
+//                       <option value="Whole Sale Medical Shop">Whole Sale Medical Shop</option>
+//                       <option value="Automobile Dealears">Automobile Dealears</option>
+//                       <option value="Cycle Dealers">Cycle Dealers</option>
+//                       <option value="Transportars">Transportars</option>
+//                       <option value="Retail Cloth Merchant">Retail Cloth Merchant</option>
+//                       <option value="Bangle Merchant">Bangle Merchant</option>
+//                       <option value="Book Salears">Book Salears</option>
+//                       <option value="Grain & Oil Seads Merchant">Grain & Oil Seads Merchant</option>
+//                       <option value="Oil & Ghee Merchant">Oil & Ghee Merchant</option>
+//                       <option value="Doctors">Doctors</option>
+//                       <option value="PVT.Service">PVT.Service</option>
+//                       <option value="Retired">Retired</option>
+//                       <option value="Industrialist">Industrialist</option>
+//                       <option value="Teacher">Teacher</option>
+//                     </Form.Select>
+//                   </Form.Group>
+//                 </Col>
 //       </Row>
 //       <Row className="mb-4">
-
 //         <Col md={4}>
 //           <Form.Group controlId="callingPurpose">
 //             <Form.Label>Calling Purpose</Form.Label>
-//             <Form.Control
+//             <Form.Select
 //               name="callingPurpose"
-//               type="text"
-//               placeholder="Calling Purpose"
 //               value={formData.callingPurpose ?? ""}
+//               onChange={handleChange}
+//               size="sm"
+//             >
+//               <option value="">-- Select Purpose --</option>
+//               <option value="Follow-up">Follow-up</option>
+//               <option value="Meeting Schedule">Meeting Schedule</option>
+//               <option value="Query Resolution">Query Resolution</option>
+//               <option value="Proposal Discussion">Proposal Discussion</option>
+//               <option value="Other">Other</option>
+//             </Form.Select>
+//           </Form.Group>
+//         </Col>
+//         <Col md={4}>
+//           <Form.Group controlId="allocatedCRE">
+//             <Form.Label>Allocated CRE</Form.Label>
+//             <Form.Control
+//               name="allocatedCRE"
+//               type="text"
+//               placeholder="Allocated CRE"
+//               value={formData.allocatedCRE ?? ""}
 //               onChange={handleChange}
 //               size="sm"
 //             />
 //           </Form.Group>
 //         </Col>
-//         <Col md={4}>
+//         <Col md={3}>
 //           <Form.Group controlId="name">
 //             <Form.Label>Name</Form.Label>
 //             <Form.Control
@@ -721,20 +765,7 @@
 //         </Col>
 //       </Row>
 //       <Row className="mb-4">
-//         <Col md={4}>
-//           <Form.Group controlId="allocatedCRE">
-//             <Form.Label>Allocated CRE</Form.Label>
-//             <Form.Control
-//               name="allocatedCRE"
-//               type="text"
-//               placeholder="Allocated CRE"
-//               value={formData.allocatedCRE ?? ""}
-//               onChange={handleChange}
-//               size="sm"
-//             />
-//           </Form.Group>
-//         </Col>
-//         <Col md={8}>
+//         <Col md={9}>
 //           <Form.Group controlId="remark">
 //             <Form.Label>Remark</Form.Label>
 //             <Form.Control
@@ -758,14 +789,20 @@
 
 // export default PersonalDetailsFormForProspect;
 
+
+
+
+
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Form, Row, Col, Button } from "react-bootstrap";
-import { createProspect, updateProspectPersonalDetails } from "../../../redux/feature/ProspectRedux/ProspectThunx";
-import { fetchDetails } from "../../../redux/feature/LeadSource/LeadThunx";
+import { createClient, updateClientPersonalDetails } from "../../../redux/feature/ClientRedux/ClientThunx";
+ import { fetchDetails } from "../../../redux/feature/LeadSource/LeadThunx";
 import { getAllOccupations } from "../../../redux/feature/LeadOccupation/OccupationThunx";
 import { getAllOccupationTypes } from "../../../redux/feature/OccupationType/OccupationThunx";
 import { toast } from "react-toastify";
+import { fetchLeadType } from "../../../redux/feature/LeadType/LeadTypeThunx";
+// import { fetchDetailss } from "../../../redux/feature/LeadSource/LeadThunx"
 
 const incomeOptions = [
   { value: "25 lakh to 1 Cr.", label: "25 lakh to 1 Cr." },
@@ -779,7 +816,7 @@ const gradeMap = {
   "2.5 to 5 lakh": 3,
 };
 
-const PersonalDetailsFormForProspect = ({ isEdit, prospectData, onProspectCreated }) => {
+const PersonalDetailsFormForProspect = ({ isEdit, clientData, onClientCreated,setFamilyDetail }) => {
   const dispatch = useDispatch();
   const initialFormState = {
     salutation: "",
@@ -821,11 +858,85 @@ const PersonalDetailsFormForProspect = ({ isEdit, prospectData, onProspectCreate
     allocatedCRE: "",
     remark: "",
   };
-
+const [occupations, setOccupations] = useState([]);
   const [formData, setFormData] = useState(initialFormState);
-  const { leadsourceDetail } = useSelector((state) => state.leadsource);
+
   const { alldetails } = useSelector((state) => state.leadOccupation);
   const { alldetailsForTypes } = useSelector((state) => state.OccupationType);
+  const [occupationTypes, setOccupationTypes] = useState([])
+const [whatsappEdited, setWhatsappEdited] = useState(false);
+const [contactEdited, setcontactEdited] = useState(false);
+
+  const { LeadType: leadTypes, loading } = useSelector((state) => state.LeadType);
+     const { leadsourceDetail } = useSelector((state) => state.leadsource);
+
+  // Component mount hote hi data fetch
+  useEffect(() => {
+    dispatch(fetchLeadType());
+  }, [dispatch]);
+
+    useEffect(() => {
+    dispatch(fetchDetails());
+  }, [dispatch]);
+
+const handleMobileWhatsappChange = (e) => {
+  const { name, value } = e.target;
+
+  setFormData((prev) => {
+    let updated = { ...prev, [name]: value };
+
+    // ✅ agar mobileNo complete ho (10 digit for example) aur whatsapp edit nahi hua ho
+    if (name === "mobileNo" && value.length === 10 && !whatsappEdited  ) {
+      updated.whatsappNo = value;
+   
+    }
+
+    return updated;
+  });
+
+  if (name === "whatsappNo") {
+    setWhatsappEdited(true);
+  }
+
+};
+
+
+
+useEffect(() => {
+    const fetchOccupations = async () => {
+      try {
+        const response = await fetch("https://vpfinance2.onrender.com/api/occupation");
+        const result = await response.json();
+        if (result.success) {
+          setOccupations(result.data); // API se aaya data store karo
+        } else {
+          console.error("Failed to fetch occupations:", result.message);
+        }
+      } catch (error) {
+        console.error("Error fetching occupations:", error);
+      }
+    };
+    fetchOccupations();
+  }, []);
+
+
+
+  useEffect(() => {
+    const fetchOccupationTypes = async () => {
+      try {
+        const response = await fetch("https://vpfinance2.onrender.com/api/occupation/types");
+        const result = await response.json();
+        if (result.success) {
+          setOccupationTypes(result.data); // API se aaya data store karo
+        } else {
+          console.error("Failed to fetch occupation types:", result.message);
+        }
+      } catch (error) {
+        console.error("Error fetching occupation types:", error);
+      }
+    };
+    fetchOccupationTypes();
+  }, []);
 
   useEffect(() => {
     dispatch(fetchDetails());
@@ -834,12 +945,12 @@ const PersonalDetailsFormForProspect = ({ isEdit, prospectData, onProspectCreate
   }, [dispatch]);
 
   useEffect(() => {
-    if (isEdit && prospectData) {
-      setFormData(prospectData.personalDetails);
+    if (isEdit && clientData) {
+      setFormData(clientData.personalDetails);
     } else {
       setFormData(initialFormState);
     }
-  }, [isEdit, prospectData]);
+  }, [isEdit, clientData]);
 
   useEffect(() => {
     setFormData((prev) => ({
@@ -847,20 +958,6 @@ const PersonalDetailsFormForProspect = ({ isEdit, prospectData, onProspectCreate
       grade: gradeMap[prev.annualIncome] || "",
     }));
   }, [formData.annualIncome]);
-
-  useEffect(() => {
-    if (formData.preferredAddressType === "resi") {
-      setFormData((prev) => ({
-        ...prev,
-        preferredMeetingAddr: prev.resiAddr,
-      }));
-    } else if (formData.preferredAddressType === "office") {
-      setFormData((prev) => ({
-        ...prev,
-        preferredMeetingAddr: prev.officeAddr,
-      }));
-    }
-  }, [formData.preferredAddressType, formData.resiAddr, formData.officeAddr]);
 
   const fetchAreaData = async (pincode) => {
     try {
@@ -870,76 +967,107 @@ const PersonalDetailsFormForProspect = ({ isEdit, prospectData, onProspectCreate
 
       if (data && Array.isArray(data)) {
         const area = data.find((item) => String(item.pincode) === String(pincode));
-
-        if (area) {
-          setFormData((prev) => ({
-            ...prev,
-            preferredMeetingArea: area.name || "",
-            city: area.city || "",
-          }));
-        } else {
-          setFormData((prev) => ({
-            ...prev,
-            preferredMeetingArea: "Area not found",
-            city: "",
-          }));
-        }
+        return area || { name: "Area not found", city: "" };
       } else {
-        setFormData((prev) => ({
-          ...prev,
-          preferredMeetingArea: "No data received",
-          city: "",
-        }));
+        return { name: "No data received", city: "" };
       }
     } catch (error) {
       console.error("Error fetching area data:", error);
-      setFormData((prev) => ({
-        ...prev,
-        preferredMeetingArea: "Error fetching area",
-        city: "",
-      }));
+      return { name: "Error fetching area", city: "" };
     }
   };
 
   useEffect(() => {
-    if (formData.resiPincode?.length === 6 || formData.officePincode?.length === 6) {
-      fetchAreaData(formData.resiPincode || formData.officePincode);
-    }
-  }, [formData.resiPincode, formData.officePincode]);
+    const updatePreferredData = async () => {
+      if (formData.preferredAddressType === "resi" && formData.resiPincode.length === 6) {
+        const areaData = await fetchAreaData(formData.resiPincode);
+        setFormData((prev) => ({
+          ...prev,
+          preferredMeetingAddr: prev.resiAddr,
+          preferredMeetingArea: areaData.name,
+          city: areaData.city,
+        }));
+      } else if (formData.preferredAddressType === "office" && formData.officePincode.length === 6) {
+        const areaData = await fetchAreaData(formData.officePincode);
+        setFormData((prev) => ({
+          ...prev,
+          preferredMeetingAddr: prev.officeAddr,
+          preferredMeetingArea: areaData.name,
+          city: areaData.city,
+        }));
+      }
+    };
+    updatePreferredData();
+  }, [formData.preferredAddressType, formData.resiPincode, formData.officePincode, formData.resiAddr, formData.officeAddr]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     if ((name === "resiPincode" || name === "officePincode") && value.length === 6) {
-      fetchAreaData(value);
+      fetchAreaData(value).then((areaData) => {
+        if (name === "resiPincode" && formData.preferredAddressType === "resi") {
+          setFormData((prev) => ({
+            ...prev,
+            preferredMeetingArea: areaData.name,
+            city: areaData.city,
+          }));
+        } else if (name === "officePincode" && formData.preferredAddressType === "office") {
+          setFormData((prev) => ({
+            ...prev,
+            preferredMeetingArea: areaData.name,
+            city: areaData.city,
+          }));
+        }
+      });
     }
   };
 
   const handleAddressTypeChange = (type) => {
-    setFormData((prev) => ({
-      ...prev,
-      preferredAddressType: type,
-      preferredMeetingAddr: type === "resi" ? prev.resiAddr : prev.officeAddr,
-    }));
+    setFormData((prev) => {
+      const newData = {
+        ...prev,
+        preferredAddressType: type,
+        preferredMeetingAddr: type === "resi" ? prev.resiAddr : prev.officeAddr,
+      };
+      if (type === "resi" && prev.resiPincode.length === 6) {
+        fetchAreaData(prev.resiPincode).then((areaData) => {
+          setFormData((prev) => ({
+            ...prev,
+            preferredMeetingArea: areaData.name,
+            city: areaData.city,
+          }));
+        });
+      } else if (type === "office" && prev.officePincode.length === 6) {
+        fetchAreaData(prev.officePincode).then((areaData) => {
+          setFormData((prev) => ({
+            ...prev,
+            preferredMeetingArea: areaData.name,
+            city: areaData.city,
+          }));
+        });
+      }
+      return newData;
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isEdit && prospectData?._id) {
+    if (isEdit && clientData?._id) {
       console.log(formData);
-      const result = await dispatch(updateProspectPersonalDetails({ id: prospectData._id, personalDetails: formData }));
+      const result = await dispatch(updateClientPersonalDetails({ id: clientData._id, personalDetails: formData }));
       if (result) {
         setFormData(initialFormState);
-        toast.info("Prospect details updated successfully");
-        if (onProspectCreated) onProspectCreated(prospectData._id);
+        toast.info("Client details updated successfully");
+        if (onClientCreated) onClientCreated(clientData._id);
       }
     } else {
-      const resultAction = await dispatch(createProspect({ personalDetails: formData }));
+      const resultAction = await dispatch(createClient({ personalDetails: formData }));
       if (resultAction) {
-        toast.success("Prospect Created Successfully");
+        toast.success("Client Created Successfully");
+        setFamilyDetail(formData)
         setFormData(initialFormState);
-        const prospectId = resultAction?.payload;
-        if (onProspectCreated && prospectId) onProspectCreated(prospectId);
+        const clientId = resultAction?.payload;
+        if (onClientCreated && clientId) onClientCreated(clientId);
       }
     }
   };
@@ -1061,7 +1189,7 @@ const PersonalDetailsFormForProspect = ({ isEdit, prospectData, onProspectCreate
         </Col>
       </Row>
       <Row className="mb-4">
-        <Col md={3}>
+        {/* <Col md={3}>
           <Form.Group controlId="mobileNo">
             <Form.Label>Mobile No</Form.Label>
             <Form.Control
@@ -1086,20 +1214,57 @@ const PersonalDetailsFormForProspect = ({ isEdit, prospectData, onProspectCreate
               size="sm"
             />
           </Form.Group>
-        </Col>
+        </Col> */}
         <Col md={3}>
-          <Form.Group controlId="contactNo">
-            <Form.Label>Contact No</Form.Label>
-            <Form.Control
-              name="contactNo"
-              type="text"
-              placeholder="Contact No"
-              value={formData.contactNo ?? ""}
-              onChange={handleChange}
-              size="sm"
-            />
-          </Form.Group>
-        </Col>
+  <Form.Group controlId="mobileNo">
+    <Form.Label>Mobile No</Form.Label>
+    <Form.Control
+      name="mobileNo"
+      type="text"
+      placeholder="Mobile No"
+      value={formData.mobileNo ?? ""}
+      onChange={handleMobileWhatsappChange}
+      maxLength={10}
+      size="sm"
+    />
+  </Form.Group>
+</Col>
+
+<Col md={3}>
+  <Form.Group controlId="whatsappNo">
+    <Form.Label>WhatsApp No</Form.Label>
+    <Form.Control
+      name="whatsappNo"
+      type="text"
+      placeholder="WhatsApp No"
+      value={formData.whatsappNo ?? ""}
+      maxLength={10}
+      onChange={handleMobileWhatsappChange}
+      size="sm"
+    />
+  </Form.Group>
+</Col>
+
+     <Col md={3}>
+  <Form.Group controlId="contactNo">
+    <Form.Label>Phone No</Form.Label>
+    <Form.Control
+      name="contactNo"
+      type="text"
+      placeholder="Phone No"
+      maxLength={14}
+      value={`0755${formData.contactNo ?? ""}`}  // 👈 prefix + stored number
+      onChange={(e) =>
+        setFormData({
+          ...formData,
+          contactNo: e.target.value.replace(/^0755/, ""), // 👈 store without prefix
+        })
+      }
+      size="sm"
+    />
+  </Form.Group>
+</Col>
+
         <Col md={3}>
           <Form.Group controlId="emailId">
             <Form.Label>Email Id</Form.Label>
@@ -1133,7 +1298,8 @@ const PersonalDetailsFormForProspect = ({ isEdit, prospectData, onProspectCreate
             <Form.Label>PA Mobile No</Form.Label>
             <Form.Control
               name="paMobileNo"
-              type="text"
+              type="tel"
+              maxLength={10}
               placeholder="PA Mobile No"
               value={formData.paMobileNo ?? ""}
               onChange={handleChange}
@@ -1148,6 +1314,7 @@ const PersonalDetailsFormForProspect = ({ isEdit, prospectData, onProspectCreate
               name="adharNumber"
               type="text"
               placeholder="Aadhar Number"
+              maxLength={12}
               value={formData.adharNumber ?? ""}
               onChange={handleChange}
               size="sm"
@@ -1156,14 +1323,16 @@ const PersonalDetailsFormForProspect = ({ isEdit, prospectData, onProspectCreate
         </Col>
         <Col md={3}>
           <Form.Group controlId="panCardNumber">
-            <Form.Label>PAN Card No</Form.Label>
+            <Form.Label>PAN  No.</Form.Label>
             <Form.Control
               name="panCardNumber"
               type="text"
-              placeholder="PAN Card Number"
+              placeholder="PAN  Number"
               value={formData.panCardNumber ?? ""}
               onChange={handleChange}
+               maxLength={10}
               size="sm"
+              style={{ textTransform: "uppercase" }}
             />
           </Form.Group>
         </Col>
@@ -1311,7 +1480,7 @@ const PersonalDetailsFormForProspect = ({ isEdit, prospectData, onProspectCreate
             />
           </Form.Group>
         </Col>
-        <Col md={3}>
+        <Col md={2}>
           <Form.Group controlId="bestTime">
             <Form.Label>Best Time</Form.Label>
             <Form.Select
@@ -1382,104 +1551,155 @@ const PersonalDetailsFormForProspect = ({ isEdit, prospectData, onProspectCreate
         </Col>
       </Row>
       <Row className="mb-4">
+     <Col md={3}>
+      <Form.Group controlId="leadSource">
+        <Form.Label>Lead Source</Form.Label>
+        <Form.Select
+          name="leadSource"
+          value={formData.leadSource ?? ""}
+          onChange={handleChange}
+          size="sm"
+        >
+          <option value="">Select Lead Source</option>
+          {loading ? (
+            <option disabled>Loading...</option>
+          ) : (
+            leadTypes?.map((type) => (
+              <option key={type._id} value={type.leadType.trim()}>
+                {type.leadType.trim()}
+              </option>
+            ))
+          )}
+        </Form.Select>
+      </Form.Group>
+    </Col>
+      <Col md={3}>
+      <Form.Group controlId="leadName">
+        <Form.Label>Lead Name</Form.Label>
+        <Form.Select
+          name="leadName"
+          value={formData.leadName ?? ""}
+          onChange={handleChange}
+          size="sm"
+        >
+          <option value="">Select Lead Name</option>
+          {loading ? (
+            <option disabled>Loading...</option>
+          ) : (
+            leadsourceDetail?.map((src) => (
+              <option key={src._id} value={src.sourceName}>
+                {src.sourceName}
+              </option>
+            ))
+          )}
+        </Form.Select>
+      </Form.Group>
+    </Col>
+        {/* <Col md={3}>
+          <Form.Group controlId="leadOccupation">
+            <Form.Label>Lead Occupation</Form.Label>
+            <Form.Select
+              name="leadOccupation"
+              value={formData.leadOccupation ?? ""}
+              onChange={handleChange}
+              size="sm"
+            >
+              <option value="">Select Lead Occupation</option>
+              <option value="Businessman">Businessman</option>
+              <option value="Govt.Service">Govt.Service</option>
+              <option value="Private Service">Private Service</option>
+              <option value="Retired">Retired</option>
+            </Form.Select>
+          </Form.Group>
+        </Col> */}
         <Col md={3}>
-                  <Form.Group controlId="leadSource">
-                    <Form.Label>Lead Source</Form.Label>
-                    <Form.Select
-                      name="leadSource"
-                      value={formData.leadSource ?? ""}
-                      onChange={handleChange}
-                      size="sm"
-                    >
-                      <option value="">Select Lead Source</option>
-                      <option value="Referred">Referred</option>
-                      <option value="Digital Platform">Digital Platform</option>
-                      <option value="Employee">Employee</option>
-                      <option value="Business Associate">Business Associate</option>
-                      <option value="Internship">Internship</option>
-                      <option value="Direct">Direct</option>
-                    </Form.Select>
-                  </Form.Group>
-                </Col>
-                <Col md={3}>
-                  <Form.Group controlId="leadName">
-                    <Form.Label>Lead Name</Form.Label>
-                    <Form.Control
-                      name="leadName"
-                      type="text"
-                      placeholder="Lead Name"
-                      value={formData.leadName ?? ""}
-                      onChange={handleChange}
-                      size="sm"
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={3}>
-                  <Form.Group controlId="leadOccupation">
-                    <Form.Label>Lead Occupation</Form.Label>
-                    <Form.Select
-                      name="leadOccupation"
-                      value={formData.leadOccupation ?? ""}
-                      onChange={handleChange}
-                      size="sm"
-                    >
-                      <option value="">Select Lead Occupation</option>
-                      <option value="Businessman">Businessman</option>
-                      <option value="Govt.Service">Govt.Service</option>
-                      <option value="Private Service">Private Service</option>
-                      <option value="Retired">Retired</option>
-                    </Form.Select>
-                  </Form.Group>
-                </Col>
-                <Col md={3}>
-                  <Form.Group controlId="leadOccupationType">
-                    <Form.Label>Lead Occupation Type</Form.Label>
-                    <Form.Select
-                      name="leadOccupationType"
-                      value={formData.leadOccupationType ?? ""}
-                      onChange={handleChange}
-                      size="sm"
-                    >
-                      <option value="">Select Lead Occupation Type</option>
-                      <option value="CA">CA</option>
-                      <option value="Jwellars">Jwellars</option>
-                      <option value="Iron Merchant">Iron Merchant</option>
-                      <option value="Kirana Merchant">Kirana Merchant</option>
-                      <option value="Sugar Tredars">Sugar Tredars</option>
-                      <option value="Cloth Merchant">Cloth Merchant</option>
-                      <option value="Whole Sale Stationary">Whole Sale Stationary</option>
-                      <option value="Tent & Lighte">Tent & Lighte</option>
-                      <option value="Pan Masala Merchant">Pan Masala Merchant</option>
-                      <option value="Bartan Merchant">Bartan Merchant</option>
-                      <option value="Paper Traders">Paper Traders</option>
-                      <option value="Restorent Ownar">Restorent Ownar</option>
-                      <option value="Hotel Ownar">Hotel Ownar</option>
-                      <option value="Electronics Shop Owner">Electronics Shop Owner</option>
-                      <option value="Electricals Shop Owner">Electricals Shop Owner</option>
-                      <option value="Tyre Dealers">Tyre Dealers</option>
-                      <option value="Tea Merchents">Tea Merchents</option>
-                      <option value="Whole Sale Medical Shop">Whole Sale Medical Shop</option>
-                      <option value="Automobile Dealears">Automobile Dealears</option>
-                      <option value="Cycle Dealers">Cycle Dealers</option>
-                      <option value="Transportars">Transportars</option>
-                      <option value="Retail Cloth Merchant">Retail Cloth Merchant</option>
-                      <option value="Bangle Merchant">Bangle Merchant</option>
-                      <option value="Book Salears">Book Salears</option>
-                      <option value="Grain & Oil Seads Merchant">Grain & Oil Seads Merchant</option>
-                      <option value="Oil & Ghee Merchant">Oil & Ghee Merchant</option>
-                      <option value="Doctors">Doctors</option>
-                      <option value="PVT.Service">PVT.Service</option>
-                      <option value="Retired">Retired</option>
-                      <option value="Industrialist">Industrialist</option>
-                      <option value="Teacher">Teacher</option>
-                    </Form.Select>
-                  </Form.Group>
-                </Col>
+          <Form.Group controlId="leadOccupation">
+            <Form.Label>Lead Occupation</Form.Label>
+            <Form.Select
+              name="leadOccupation"
+              value={formData.leadOccupation ?? ""}
+              onChange={handleChange}
+              size="sm"
+            >
+              <option value="">Select Lead Occupation</option>
+              {occupations.map((occupation) => (
+                <option key={occupation._id} value={occupation.occupationName}>
+                  {occupation.occupationName}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </Col>
+        {/* <Col md={3}>
+          <Form.Group controlId="leadOccupationType">
+            <Form.Label>Lead Occupation Type</Form.Label>
+            <Form.Select
+              name="leadOccupationType"
+              value={formData.leadOccupationType ?? ""}
+              onChange={handleChange}
+              size="sm"
+            >
+              <option value="">Select Lead Occupation Type</option>
+              <option value="CA">CA</option>
+              <option value="Jwellars">Jwellars</option>
+              <option value="Iron Merchant">Iron Merchant</option>
+              <option value="Kirana Merchant">Kirana Merchant</option>
+              <option value="Sugar Tredars">Sugar Tredars</option>
+              <option value="Cloth Merchant">Cloth Merchant</option>
+              <option value="Whole Sale Stationary">Whole Sale Stationary</option>
+              <option value="Tent & Lighte">Tent & Lighte</option>
+              <option value="Pan Masala Merchant">Pan Masala Merchant</option>
+              <option value="Bartan Merchant">Bartan Merchant</option>
+              <option value="Paper Traders">Paper Traders</option>
+              <option value="Restorent Ownar">Restorent Ownar</option>
+              <option value="Hotel Ownar">Hotel Ownar</option>
+              <option value="Electronics Shop Owner">Electronics Shop Owner</option>
+              <option value="Electricals Shop Owner">Electricals Shop Owner</option>
+              <option value="Tyre Dealers">Tyre Dealers</option>
+              <option value="Tea Merchents">Tea Merchents</option>
+              <option value="Whole Sale Medical Shop">Whole Sale Medical Shop</option>
+              <option value="Automobile Dealears">Automobile Dealears</option>
+              <option value="Cycle Dealers">Cycle Dealers</option>
+              <option value="Transportars">Transportars</option>
+              <option value="Retail Cloth Merchant">Retail Cloth Merchant</option>
+              <option value="Bangle Merchant">Bangle Merchant</option>
+              <option value="Book Salears">Book Salears</option>
+              <option value="Grain & Oil Seads Merchant">Grain & Oil Seads Merchant</option>
+              <option value="Oil & Ghee Merchant">Oil & Ghee Merchant</option>
+              <option value="Doctors">Doctors</option>
+              <option value="PVT.Service">PVT.Service</option>
+              <option value="Retired">Retired</option>
+              <option value="Industrialist">Industrialist</option>
+              <option value="Teacher">Teacher</option>
+            </Form.Select>
+          </Form.Group>
+        </Col> */}
+
+
+        <Col md={3}>
+          <Form.Group controlId="leadOccupationType">
+            <Form.Label>Lead Occupation Type</Form.Label>
+            <Form.Select
+              name="leadOccupationType"
+              value={formData.leadOccupationType ?? ""}
+              onChange={handleChange}
+              size="sm"
+            >
+              <option value="">Select Lead Occupation Type</option>
+              {occupationTypes.map((type) => (
+                <option key={type._id} value={type.occupationType}>
+                  {type.occupationType}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </Col>
+
       </Row>
       <Row className="mb-4">
         <Col md={4}>
           <Form.Group controlId="callingPurpose">
-            <Form.Label>Calling Purpose</Form.Label>
+            <Form.Label>Calling or Meeting Purpose</Form.Label>
             <Form.Select
               name="callingPurpose"
               value={formData.callingPurpose ?? ""}
@@ -1495,6 +1715,19 @@ const PersonalDetailsFormForProspect = ({ isEdit, prospectData, onProspectCreate
             </Form.Select>
           </Form.Group>
         </Col>
+                <Col md={3}>
+          <Form.Group controlId="name">
+            <Form.Label>Purpose name / Task name</Form.Label>
+            <Form.Control
+              name="name"
+              type="text"
+              placeholder="Name"
+              value={formData.name ?? ""}
+              onChange={handleChange}
+              size="sm"
+            />
+          </Form.Group>
+        </Col>
         <Col md={4}>
           <Form.Group controlId="allocatedCRE">
             <Form.Label>Allocated CRE</Form.Label>
@@ -1508,19 +1741,7 @@ const PersonalDetailsFormForProspect = ({ isEdit, prospectData, onProspectCreate
             />
           </Form.Group>
         </Col>
-        <Col md={3}>
-          <Form.Group controlId="name">
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              name="name"
-              type="text"
-              placeholder="Name"
-              value={formData.name ?? ""}
-              onChange={handleChange}
-              size="sm"
-            />
-          </Form.Group>
-        </Col>
+
       </Row>
       <Row className="mb-4">
         <Col md={9}>
@@ -1539,10 +1760,9 @@ const PersonalDetailsFormForProspect = ({ isEdit, prospectData, onProspectCreate
         </Col>
       </Row>
       <Button type="submit" className="btn btn-primary">
-        {isEdit && prospectData?._id ? "Update" : "Create"}
+        {isEdit && clientData?._id ? "Update" : "Create"}
       </Button>
     </Form>
   );
 };
-
 export default PersonalDetailsFormForProspect;
