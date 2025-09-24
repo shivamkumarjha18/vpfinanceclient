@@ -396,32 +396,7 @@ useEffect(() => {
         </Col>
       </Row>
       <Row className="mb-4">
-        {/* <Col md={3}>
-          <Form.Group controlId="mobileNo">
-            <Form.Label>Mobile No</Form.Label>
-            <Form.Control
-              name="mobileNo"
-              type="text"
-              placeholder="Mobile No"
-              value={formData.mobileNo ?? ""}
-              onChange={handleChange}
-              size="sm"
-            />
-          </Form.Group>
-        </Col>
-        <Col md={3}>
-          <Form.Group controlId="whatsappNo">
-            <Form.Label>Whatsapp No</Form.Label>
-            <Form.Control
-              name="whatsappNo"
-              type="text"
-              placeholder="Whatsapp No"
-              value={formData.whatsappNo ?? ""}
-              onChange={handleChange}
-              size="sm"
-            />
-          </Form.Group>
-        </Col> */}
+       
         <Col md={3}>
   <Form.Group controlId="mobileNo">
     <Form.Label>Mobile No</Form.Label>
@@ -801,24 +776,7 @@ useEffect(() => {
           )}
         </Form.Select>
       </Form.Group>
-    </Col>
-        {/* <Col md={3}>
-          <Form.Group controlId="leadOccupation">
-            <Form.Label>Lead Occupation</Form.Label>
-            <Form.Select
-              name="leadOccupation"
-              value={formData.leadOccupation ?? ""}
-              onChange={handleChange}
-              size="sm"
-            >
-              <option value="">Select Lead Occupation</option>
-              <option value="Businessman">Businessman</option>
-              <option value="Govt.Service">Govt.Service</option>
-              <option value="Private Service">Private Service</option>
-              <option value="Retired">Retired</option>
-            </Form.Select>
-          </Form.Group>
-        </Col> */}
+    </Col>  
         <Col md={3}>
           <Form.Group controlId="leadOccupation">
             <Form.Label>Lead Occupation</Form.Label>
@@ -837,52 +795,6 @@ useEffect(() => {
             </Form.Select>
           </Form.Group>
         </Col>
-        {/* <Col md={3}>
-          <Form.Group controlId="leadOccupationType">
-            <Form.Label>Lead Occupation Type</Form.Label>
-            <Form.Select
-              name="leadOccupationType"
-              value={formData.leadOccupationType ?? ""}
-              onChange={handleChange}
-              size="sm"
-            >
-              <option value="">Select Lead Occupation Type</option>
-              <option value="CA">CA</option>
-              <option value="Jwellars">Jwellars</option>
-              <option value="Iron Merchant">Iron Merchant</option>
-              <option value="Kirana Merchant">Kirana Merchant</option>
-              <option value="Sugar Tredars">Sugar Tredars</option>
-              <option value="Cloth Merchant">Cloth Merchant</option>
-              <option value="Whole Sale Stationary">Whole Sale Stationary</option>
-              <option value="Tent & Lighte">Tent & Lighte</option>
-              <option value="Pan Masala Merchant">Pan Masala Merchant</option>
-              <option value="Bartan Merchant">Bartan Merchant</option>
-              <option value="Paper Traders">Paper Traders</option>
-              <option value="Restorent Ownar">Restorent Ownar</option>
-              <option value="Hotel Ownar">Hotel Ownar</option>
-              <option value="Electronics Shop Owner">Electronics Shop Owner</option>
-              <option value="Electricals Shop Owner">Electricals Shop Owner</option>
-              <option value="Tyre Dealers">Tyre Dealers</option>
-              <option value="Tea Merchents">Tea Merchents</option>
-              <option value="Whole Sale Medical Shop">Whole Sale Medical Shop</option>
-              <option value="Automobile Dealears">Automobile Dealears</option>
-              <option value="Cycle Dealers">Cycle Dealers</option>
-              <option value="Transportars">Transportars</option>
-              <option value="Retail Cloth Merchant">Retail Cloth Merchant</option>
-              <option value="Bangle Merchant">Bangle Merchant</option>
-              <option value="Book Salears">Book Salears</option>
-              <option value="Grain & Oil Seads Merchant">Grain & Oil Seads Merchant</option>
-              <option value="Oil & Ghee Merchant">Oil & Ghee Merchant</option>
-              <option value="Doctors">Doctors</option>
-              <option value="PVT.Service">PVT.Service</option>
-              <option value="Retired">Retired</option>
-              <option value="Industrialist">Industrialist</option>
-              <option value="Teacher">Teacher</option>
-            </Form.Select>
-          </Form.Group>
-        </Col> */}
-
-
         <Col md={3}>
           <Form.Group controlId="leadOccupationType">
             <Form.Label>Lead Occupation Type</Form.Label>
@@ -973,3 +885,7 @@ useEffect(() => {
   );
 };
 export default PersonalDetailsForm;
+
+
+
+

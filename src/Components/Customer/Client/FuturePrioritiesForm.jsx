@@ -380,52 +380,74 @@ console.log("savedFuturePriorityForms",savedFuturePriorityForms)
       ))}
 
       <Row className="mb-3">
-        <Col md={12}>
-          <Form.Group>
-            <Form.Label>Needs</Form.Label>
-            <Form.Check
-              inline
-              type="checkbox"
-              label="Financial Calculation"
-              name="financialCalculation"
-              checked={needs.financialCalculation}
-              onChange={handleNeedsChange}
-            />
-            <Form.Check
-              inline
-              type="checkbox"
-              label="Assessment of Need"
-              name="assesmentOfNeed"
-              checked={needs.assesmentOfNeed}
-              onChange={handleNeedsChange}
-            />
-            <Form.Check
-              inline
-              type="checkbox"
-              label="Portfolio Management"
-              name="portfolioManagement"
-              checked={needs.portfolioManagement}
-              onChange={handleNeedsChange}
-            />
-            <Form.Check
-              inline
-              type="checkbox"
-              label="Door Step Services"
-              name="doorStepServices"
-              checked={needs.doorStepServices}
-              onChange={handleNeedsChange}
-            />
-            <Form.Check
-              inline
-              type="checkbox"
-              label="Purchase New Products"
-              name="purchaseNewProducts"
-              checked={needs.purchaseNewProducts}
-              onChange={handleNeedsChange}
-            />
-          </Form.Group>
-        </Col>
-      </Row>
+  <Col md={12}>
+    <Form.Group>
+      {/* <Form.Label>Needs</Form.Label> */}
+
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", alignItems: "center" }}>
+        <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+          Financial Calculation
+          <Form.Check
+            type="checkbox"
+            name="financialCalculation"
+            checked={needs.financialCalculation}
+            onChange={handleNeedsChange}
+            label=""
+            style={{ margin: 0 }}
+          />
+        </label>
+
+        <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+          Assessment of Need
+          <Form.Check
+            type="checkbox"
+            name="assesmentOfNeed"
+            checked={needs.assesmentOfNeed}
+            onChange={handleNeedsChange}
+            label=""
+            style={{ margin: 0 }}
+          />
+        </label>
+
+        <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+          Portfolio Management
+          <Form.Check
+            type="checkbox"
+            name="portfolioManagement"
+            checked={needs.portfolioManagement}
+            onChange={handleNeedsChange}
+            label=""
+            style={{ margin: 0 }}
+          />
+        </label>
+
+        <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+          Door Step Services
+          <Form.Check
+            type="checkbox"
+            name="doorStepServices"
+            checked={needs.doorStepServices}
+            onChange={handleNeedsChange}
+            label=""
+            style={{ margin: 0 }}
+          />
+        </label>
+
+        <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+          Purchase New Products
+          <Form.Check
+            type="checkbox"
+            name="purchaseNewProducts"
+            checked={needs.purchaseNewProducts}
+            onChange={handleNeedsChange}
+            label=""
+            style={{ margin: 0 }}
+          />
+        </label>
+      </div>
+    </Form.Group>
+  </Col>
+</Row>
 
       <Button type="submit" className="btn btn-primary mt-3 me-2" disabled={loading}>
         Add Future Priorities
