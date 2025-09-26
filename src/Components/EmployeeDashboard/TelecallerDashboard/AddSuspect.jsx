@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Form, Row, Col, Button } from "react-bootstrap";
@@ -10,7 +7,7 @@ import { getAllOccupations } from "../../../redux/feature/LeadOccupation/Occupat
 import { getAllOccupationTypes } from "../../../redux/feature/OccupationType/OccupationThunx";
 import { fetchLeadType } from "../../../redux/feature/LeadType/LeadTypeThunx";
 import { toast } from "react-toastify";
-
+import { Tabs, Tab } from "react-bootstrap";
 // Debounce function to limit API calls
 const debounce = (func, delay) => {
   let timeoutId;
@@ -277,30 +274,6 @@ useEffect(() => {
     });
   };
 
-    // useEffect(() => {
-    //   const updatePreferredData = async () => {
-    //     if (formData.preferredAddressType === "resi" && formData.resiPincode.length === 6) {
-    //       const areaData = await fetchAreaData(formData.resiPincode);
-    //       setFormData((prev) => ({
-    //         ...prev,
-    //         preferredMeetingAddr: prev.resiAddr,
-    //         preferredMeetingArea: areaData.name,
-    //         city: areaData.city,
-    //       }));
-    //     } else if (formData.preferredAddressType === "office" && formData.officePincode.length === 6) {
-    //       const areaData = await fetchAreaData(formData.officePincode);
-    //       setFormData((prev) => ({
-    //         ...prev,
-    //         preferredMeetingAddr: prev.officeAddr,
-    //         preferredMeetingArea: areaData.name,
-    //         city: areaData.city,
-    //       }));
-    //     }
-    //   };
-    //   updatePreferredData();
-    // }, [formData.preferredAddressType, formData.resiPincode, formData.officePincode, formData.resiAddr, formData.officeAddr]);
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isEdit && suspectData?._id) {
@@ -536,7 +509,7 @@ useEffect(() => {
           <Col md={1} className="mt-2">
             <Form.Check
               type="radio"
-              label="Residential"
+              label="Resi."
               name="preferredAddressType"
               checked={formData.preferredAddressType === "resi"}
               onChange={() => handleAddressTypeChange("resi")}
@@ -736,23 +709,6 @@ useEffect(() => {
               </Form.Select>
             </Form.Group>
           </Col>
-              {/* <Col md={3}>
-                <Form.Group controlId="leadOccupation">
-                  <Form.Label>Lead Occupation</Form.Label>
-                  <Form.Select
-                    name="leadOccupation"
-                    value={formData.leadOccupation ?? ""}
-                    onChange={handleChange}
-                    size="sm"
-                  >
-                    <option value="">Select Lead Occupation</option>
-                    <option value="Businessman">Businessman</option>
-                    <option value="Govt.Service">Govt.Service</option>
-                    <option value="Private Service">Private Service</option>
-                    <option value="Retired">Retired</option>
-                  </Form.Select>
-                </Form.Group>
-              </Col> */}
               <Col md={3}>
                 <Form.Group controlId="leadOccupation">
                   <Form.Label>Lead Occupation</Form.Label>
@@ -771,52 +727,6 @@ useEffect(() => {
                   </Form.Select>
                 </Form.Group>
               </Col>
-              {/* <Col md={3}>
-                <Form.Group controlId="leadOccupationType">
-                  <Form.Label>Lead Occupation Type</Form.Label>
-                  <Form.Select
-                    name="leadOccupationType"
-                    value={formData.leadOccupationType ?? ""}
-                    onChange={handleChange}
-                    size="sm"
-                  >
-                    <option value="">Select Lead Occupation Type</option>
-                    <option value="CA">CA</option>
-                    <option value="Jwellars">Jwellars</option>
-                    <option value="Iron Merchant">Iron Merchant</option>
-                    <option value="Kirana Merchant">Kirana Merchant</option>
-                    <option value="Sugar Tredars">Sugar Tredars</option>
-                    <option value="Cloth Merchant">Cloth Merchant</option>
-                    <option value="Whole Sale Stationary">Whole Sale Stationary</option>
-                    <option value="Tent & Lighte">Tent & Lighte</option>
-                    <option value="Pan Masala Merchant">Pan Masala Merchant</option>
-                    <option value="Bartan Merchant">Bartan Merchant</option>
-                    <option value="Paper Traders">Paper Traders</option>
-                    <option value="Restorent Ownar">Restorent Ownar</option>
-                    <option value="Hotel Ownar">Hotel Ownar</option>
-                    <option value="Electronics Shop Owner">Electronics Shop Owner</option>
-                    <option value="Electricals Shop Owner">Electricals Shop Owner</option>
-                    <option value="Tyre Dealers">Tyre Dealers</option>
-                    <option value="Tea Merchents">Tea Merchents</option>
-                    <option value="Whole Sale Medical Shop">Whole Sale Medical Shop</option>
-                    <option value="Automobile Dealears">Automobile Dealears</option>
-                    <option value="Cycle Dealers">Cycle Dealers</option>
-                    <option value="Transportars">Transportars</option>
-                    <option value="Retail Cloth Merchant">Retail Cloth Merchant</option>
-                    <option value="Bangle Merchant">Bangle Merchant</option>
-                    <option value="Book Salears">Book Salears</option>
-                    <option value="Grain & Oil Seads Merchant">Grain & Oil Seads Merchant</option>
-                    <option value="Oil & Ghee Merchant">Oil & Ghee Merchant</option>
-                    <option value="Doctors">Doctors</option>
-                    <option value="PVT.Service">PVT.Service</option>
-                    <option value="Retired">Retired</option>
-                    <option value="Industrialist">Industrialist</option>
-                    <option value="Teacher">Teacher</option>
-                  </Form.Select>
-                </Form.Group>
-              </Col> */}
-      
-      
               <Col md={3}>
                 <Form.Group controlId="leadOccupationType">
                   <Form.Label>Lead Occupation Type</Form.Label>
@@ -873,8 +783,128 @@ useEffect(() => {
       <Button type="submit" className="btn btn-primary">
         {isEdit && suspectData?._id ? "Update" : "Submit Lead"}
       </Button>
+
+
+{isEdit && suspectData?._id && (
+  <div className="mt-4">
+    <Tabs defaultActiveKey="addCall" id="call-tabs" className="mb-3">
+      
+      {/* Tab 1: Add Call Task */}
+      <Tab eventKey="addCall" title="📞 Add Call Task">
+        <Form >
+          <Row className="mb-3">
+            <Col md={6}>
+              <Form.Group controlId="lastCallDate">
+                <Form.Label>Last Call Date</Form.Label>
+                <Form.Control
+                  type="date"
+                  name="lastCallDate"
+                  value={formData.lastCallDate ?? ""}
+                  onChange={handleChange}
+                  size="sm"
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group controlId="callStatus">
+                <Form.Label>Call Status</Form.Label>
+                <Form.Select
+                  name="callStatus"
+                  value={formData.callStatus ?? ""}
+                  onChange={handleChange}
+                  size="sm"
+                >
+                  <option value="">-- Select Status --</option>
+                  <option value="Interested">Interested</option>
+                  <option value="Follow-up Required">Follow-up Required</option>
+                  <option value="Not Interested">Not Interested</option>
+                  <option value="Converted">Converted</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
+          </Row>
+
+          <Row className="mb-3">
+            <Col md={12}>
+              <Form.Group controlId="callRemarks">
+                <Form.Label>Remarks</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  name="callRemarks"
+                  placeholder="Enter call remarks..."
+                  value={formData.callRemarks ?? ""}
+                  onChange={handleChange}
+                  size="sm"
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+
+          <h5 className="mb-3 text-success">📌 Next Action</h5>
+          <Row className="mb-3">
+            <Col md={6}>
+              <Form.Group controlId="nextFollowUpDate">
+                <Form.Label>Next Follow-Up Date</Form.Label>
+                <Form.Control
+                  type="date"
+                  name="nextFollowUpDate"
+                  value={formData.nextFollowUpDate ?? ""}
+                  onChange={handleChange}
+                  size="sm"
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group controlId="assignedTo">
+                <Form.Label>Assign To (Telecaller/CRE)</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="assignedTo"
+                  placeholder="Enter Name"
+                  value={formData.assignedTo ?? ""}
+                  onChange={handleChange}
+                  size="sm"
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+
+          {/* Submit button for Call Summary */}
+          <div className="text-end">
+            <Button variant="success" size="sm" type="submit">
+              💾 Save Call Summary
+            </Button>
+          </div>
+        </Form>
+      </Tab>
+
+      {/* Tab 2: Call History */}
+      <Tab eventKey="callHistory" title="📜 Call History">
+        {suspectData?.callHistory?.length > 0 ? (
+          <div className="p-2">
+            {suspectData.callHistory.map((call, idx) => (
+              <div key={idx} className="border rounded p-2 mb-2 bg-light">
+                <strong>Date:</strong> {call.date} <br />
+                <strong>Status:</strong> {call.status} <br />
+                <strong>Remarks:</strong> {call.remarks}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-muted">No call history available.</p>
+        )}
+      </Tab>
+    </Tabs>
+  </div>
+)}
+
+
     </Form>
+
+    
   );
 };
-
 export default AddSuspect 
+
+

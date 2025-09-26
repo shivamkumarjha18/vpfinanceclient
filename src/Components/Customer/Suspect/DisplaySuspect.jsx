@@ -7,7 +7,7 @@ import DataTable from "react-data-table-component";
 import { toast } from "react-toastify";
 import { deleteSuspectById, getAllSuspects, updateSuspectStatus} from "../../../redux/feature/SuspectRedux/SuspectThunx";
 import { useNavigate } from "react-router-dom";
-
+import { Dropdown, ButtonGroup } from "react-bootstrap";
 function DisplaySuspect() {
   const dispatch = useDispatch();
   const { suspects = [], loading, error } = useSelector((state) => state.suspect);
@@ -142,14 +142,20 @@ function DisplaySuspect() {
     {
       name: "Convert",
       cell: (row) => (
-        <Button
-          variant="primary"
-          size="sm"
-          onClick={() => handleConvertStatus(row.id, "client")}
-          className="text-nowrap"
-        >
-          To Client
-        </Button>
+       <Dropdown as={ButtonGroup}>
+  <Dropdown.Toggle variant="primary" size="sm" className="text-nowrap">
+    Convert Status
+  </Dropdown.Toggle>
+
+  <Dropdown.Menu>
+    <Dropdown.Item onClick={() => handleConvertStatus(row.id, "client")}>
+      Client
+    </Dropdown.Item>
+    <Dropdown.Item onClick={() => handleConvertStatus(row.id, "prospect")}>
+      Prospect
+    </Dropdown.Item>
+  </Dropdown.Menu>
+</Dropdown>
       ),
       ignoreRowClick: true,
       width: "120px",

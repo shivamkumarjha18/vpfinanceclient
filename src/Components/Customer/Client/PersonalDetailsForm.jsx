@@ -523,7 +523,7 @@ useEffect(() => {
         <Col md={1} className="mt-2">
           <Form.Check
             type="radio"
-            label="Residential"
+            label="Resi."
             name="preferredAddressType"
             checked={formData.preferredAddressType === "resi"}
             onChange={() => handleAddressTypeChange("resi")}
