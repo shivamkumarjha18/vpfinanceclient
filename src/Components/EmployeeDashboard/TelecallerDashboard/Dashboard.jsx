@@ -228,17 +228,17 @@ console.log(telecallerId)
 
       {/* 🔥 NEW: Tab Navigation */}
       <div className="tab-navigation">
-        <button 
+        {/* <button 
           className={`tab-btn ${activeTab === 'today' ? 'active' : ''}`}
           onClick={() => setActiveTab('today')}
         >
-          Previous Call Task
-        </button>
+          Previous Call Task 
+        </button> */}
         <button 
           className={`tab-btn ${activeTab === 'assigned' ? 'active' : ''}`}
           onClick={() => setActiveTab('assigned')}
         >
-          My Assigned Suspects ({assignedSuspects.length})
+            Previous Call Task  ({assignedSuspects.length})
         </button>
         <button 
           className="refresh-btn"
@@ -251,7 +251,7 @@ console.log(telecallerId)
 
       {/* ---- Previous Call Task / Assigned Suspects Table ---- */}
       <div className="table-container mt-3">
-        {activeTab === 'today' && (
+        {/* {activeTab === 'today' && (
           <>
             <h2 className="table-title">Previous Call Task</h2>
             {loading ? (
@@ -332,7 +332,7 @@ console.log(telecallerId)
               </table>
             )}
           </>
-        )}
+        )} */}
 
         {/* 🔥 NEW: Assigned Suspects Table */}
      {activeTab === 'assigned' && (
@@ -364,8 +364,11 @@ console.log(telecallerId)
             <th>Organisation</th>
             <th>Area</th>
             <th>Mobile</th>
-            <th>Status</th>
+            <th>Calling Purpose</th>
+            <th> Calling Status</th>
             <th>Remark</th>
+               <th>Call back</th>
+            
           </tr>
         </thead>
         <tbody>
@@ -387,16 +390,21 @@ console.log(telecallerId)
                   </button>
                   <button
                     className="btn-sm btn-primary"
-                    onClick={() => setActionPanel({ type: "callback", suspect })}
+                    onClick={() => setActionPanel({ type: "close", suspect })}
                   >
-                    Call Back
+                    Close
                   </button>
                 </td>
                 {/* 🔥 Updated Assigned Date with date + time */}
                 <td>
-                  {suspect.assignedAt
-                    ? new Date(suspect.assignedAt).toLocaleString()
-                    : "-"}
+              {suspect.assignedAt
+  ? new Date(suspect.assignedAt).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric"
+    })
+  : "-"}
+
                 </td>
                 <td
                   className="clickable"
@@ -408,11 +416,18 @@ console.log(telecallerId)
                 <td>{personal.city || "-"}</td>
                 <td>{personal.contactNo || "-"}</td>
                 <td>
-                  <span className={`status-badge ${suspect.status || 'new'}`}>
+                  {/* <span className={`status-badge ${suspect.status || 'new'}`}>
                     {suspect.status || "New"}
-                  </span>
+                  </span> */}
                 </td>
                 <td>{personal.remark || "-"}</td>
+                   <td>{personal.remark || "-"}</td>
+                      <td>     <button
+                    className="btn-sm btn-primary"
+                    onClick={() => setActionPanel({ type: "callback", suspect })}
+                  >
+                    Call back
+                  </button>  </td>
               </tr>
             );
           })}
