@@ -9,7 +9,7 @@ import BusyOnAnotherCallPage from "../Components/EmployeeDashboard/TelecallerDas
 import CallAfterSomeTimePage from "../Components/EmployeeDashboard/TelecallerDashboard/CallAfterSomeTimePage"
 import CallNotPickedPage from "../Components/EmployeeDashboard/TelecallerDashboard/CallNotPickedPage"
 import OthersLeadsPage from "../Components/EmployeeDashboard/TelecallerDashboard/OthersLeadsPage"
-import AppointmentComponent from "../Components/EmployeeDashboard/TelecallerDashboard/Appointment";
+// import AppointmentComponent from "../Components/EmployeeDashboard/TelecallerDashboard/Appointment";
 import BalanceLeadsPage from "../Components/EmployeeDashboard/TelecallerDashboard/BalanceLeadsPage";
 import CallingDonePage from "../Components/EmployeeDashboard/TelecallerDashboard/CallingDonePage";
 // Master Components
@@ -39,8 +39,8 @@ import KYCtabs from "../Components/Customer/KYC/KYCtabs";
 
 // Employee Components
 import EmployeeAddForm from "../Components/Employee/OfficeAdmin/EmployeeAddForm";
-import CareerEnquiry from "../Components/Employee/OfficeAdmin/CareerEnquiry";
-import ResumesShortlist from "../Components/Employee/OfficeAdmin/ResumesShortlist";
+import CareerEnquiry from "../Components/Employee/HR/CareerEnquiry";
+import ResumesShortlist from "../Components/Employee/HR/ResumesShortlist";
 import SelectedInterviewTable from "../Components/Employee/OfficeAdmin/SelectedInterviewTable";
 import JoiningData from "../Components/Employee/OfficeAdmin/JoiningData";
 import Kycdocument from "../Components/Masters/kycdocument/Kycdocument";
@@ -73,6 +73,10 @@ import NotInterested from "../Components/EmployeeDashboard/TelecallerDashboard/N
 import NotReachable from "../Components/EmployeeDashboard/TelecallerDashboard/NotReachable";
 import WrongNumber from "../Components/EmployeeDashboard/TelecallerDashboard/WrongNumber";
 import TaskAssign from "../Components/Masters/Taskassign";
+import VacancyNotice from "../Components/Employee/HR/VacancyNotice";
+import Addcandidate from "../Components/Employee/HR/Addcandidate";
+import Monthlyappointment from "../Components/EmployeeDashboard/TelecallerDashboard/Monthlyappointment";
+import Callback from "../Components/EmployeeDashboard/TelecallerDashboard/Callback";
 // 🔒 ProtectedRoute Component (Strict Role Check)
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const token = localStorage.getItem("token");
@@ -94,20 +98,9 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
 const AppRoutes = () => {
 
-const suspectData = {
-    _id: "12345",
-    personalDetails: {
-      salutation: "Mr.",
-      groupName: "John Doe Family",
-      gender: "Male",
-      organisation: "ABC Corp",
-      // ... other data
-    }
-  };
 
-    const handleSuspectCreated = (suspectId) => {
-    console.log("Suspect created with ID:", suspectId);
-  };
+
+    
 
   return (
     <Routes>
@@ -142,13 +135,13 @@ const suspectData = {
   <Route path="forwarded-leads" element={<ForwardedLeadsPage/>} />
   <Route path="rejected-leads" element={<RejectedLeadsPage />} />
   <Route path="appointments-done" element={<AppointmentsDonePage />} /> 
-  <Route path="appointments" element={<AppointmentComponent />} /> 
+  <Route path="appointments" element={< Monthlyappointment/>} /> 
 
   {/* 🟢 Active Leads Parent */}
   <Route   path="/telecaller/active" element={<ActiveLeadsPage />} />
 
   {/* 🟢 Children of Active Leads */}
-  
+   <Route path="Callback" element={<Callback />} />
   <Route path="busy-on-another-call" element={<BusyOnAnotherCallPage />} />
   <Route path="call-after-some-time" element={<CallAfterSomeTimePage />} />
   <Route path="call-not-picked" element={<CallNotPickedPage />} />
@@ -218,6 +211,8 @@ const suspectData = {
         {/* Employee - Only OA */}
         <Route path="/add-employee" element={<EmployeeAddForm />} />
         <Route path="/career-enquiry" element={<CareerEnquiry />} />
+           <Route path="/vacancy-notice" element={<VacancyNotice/>} />
+              <Route path="/addcandidate" element={<Addcandidate />} />
         <Route path="/resume-shortlist" element={<ResumesShortlist />} />
         <Route path="/interview-process" element={<SelectedInterviewTable />} />
         <Route path="/joining-data" element={<JoiningData />} />

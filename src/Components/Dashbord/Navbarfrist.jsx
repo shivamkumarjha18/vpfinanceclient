@@ -270,6 +270,9 @@ const Navbarfristn = () => {
                       <Dropdown.Item as={Link} to="/vacancy-notice">
                         Vacancy Notice
                       </Dropdown.Item>
+                         <Dropdown.Item as={Link} to="/addcandidate">
+                        Add Candidate
+                      </Dropdown.Item>
                       <Dropdown.Item as={Link} to="/career-enquiry">
                         Career Enquiry
                       </Dropdown.Item>
@@ -359,6 +362,9 @@ const Navbarfristn = () => {
                       </Dropdown.Item>
                       <Dropdown.Item as={Link} to="/vacancy-notice">
                         Vacancy Notice
+                      </Dropdown.Item>
+                               <Dropdown.Item as={Link} to="/addcandidate">
+                        Add Candidate
                       </Dropdown.Item>
                       <Dropdown.Item as={Link} to="/career-enquiry">
                         Career Enquiry

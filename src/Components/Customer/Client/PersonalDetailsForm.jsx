@@ -111,7 +111,7 @@ const handleMobileWhatsappChange = (e) => {
 useEffect(() => {
     const fetchOccupations = async () => {
       try {
-        const response = await fetch("https://vpfinance2.onrender.com/api/occupation");
+        const response = await fetch("http://localhost:8080/api/occupation");
         const result = await response.json();
         if (result.success) {
           setOccupations(result.data); // API se aaya data store karo
@@ -130,7 +130,7 @@ useEffect(() => {
   useEffect(() => {
     const fetchOccupationTypes = async () => {
       try {
-        const response = await fetch("https://vpfinance2.onrender.com/api/occupation/types");
+        const response = await fetch("http://localhost:8080/api/occupation/types");
         const result = await response.json();
         if (result.success) {
           setOccupationTypes(result.data); // API se aaya data store karo
@@ -167,7 +167,7 @@ useEffect(() => {
 
   const fetchAreaData = async (pincode) => {
     try {
-      const response = await fetch(`https://vpfinance2.onrender.com/api/leadarea?pincode=${pincode}`);
+      const response = await fetch(`http://localhost:8080/api/leadarea?pincode=${pincode}`);
       const data = await response.json();
       console.log("API Response:", data);
 

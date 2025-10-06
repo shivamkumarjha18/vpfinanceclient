@@ -27,6 +27,7 @@ import OEReducer from  "./feature/OE/OESlice"
 import OAReducer from  "./feature/OA/OASlice"
 import HRReducer from  "./feature/HR/HRSlice"
 import authReducer from "./feature/auth/authSlice"
+import dashboardReducer from  "./feature/showdashboarddata/dashboarddataSlice"
 export const store = configureStore({
   reducer: {
   telecaller: telecallerReducer,
@@ -35,6 +36,7 @@ export const store = configureStore({
   OA:OAReducer,
   HR:HRReducer,
 auth:authReducer,
+dashboard:dashboardReducer,
     leadsource: leadSourceReducer,
     leadOccupation: LeadOccupationReducer,
     OccupationType: OccupationTypeReducer,

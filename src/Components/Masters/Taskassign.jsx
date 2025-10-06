@@ -38,7 +38,7 @@
 //   useEffect(() => {
 //     const fetchTelecallers = async () => {
 //       try {
-//         const res = await fetch("https://vpfinance2.onrender.com/api/telecaller/");
+//         const res = await fetch("http://localhost:8080/api/telecaller/");
 //         const data = await res.json();
 
 //         if (Array.isArray(data)) {
@@ -164,7 +164,7 @@
 //   setIsAssigning(true);
 
 //   try {
-//     const response = await fetch("https://vpfinance2.onrender.com/api/telecaller/assign-suspects", {
+//     const response = await fetch("http://localhost:8080/api/telecaller/assign-suspects", {
 //       method: "POST",
 //       headers: { "Content-Type": "application/json" },
 //       body: JSON.stringify({
@@ -210,7 +210,7 @@
 //         // const refreshAssignments = async () => {
 //         //   try {
 //         //     setLoadingAssignments(true);
-//         //     const response = await fetch("https://vpfinance2.onrender.com/api/telecaller/assignments");
+//         //     const response = await fetch("http://localhost:8080/api/telecaller/assignments");
 //         //     const result = await response.json();
 
 //         //     if (response.ok && result.success) {
@@ -517,7 +517,7 @@ const TaskAssign = () => {
   useEffect(() => {
     const fetchTelecallers = async () => {
       try {
-        const res = await fetch("https://vpfinance2.onrender.com/api/telecaller/");
+        const res = await fetch("http://localhost:8080/api/telecaller/");
         const data = await res.json();
 
         if (Array.isArray(data)) {
@@ -658,7 +658,7 @@ const TaskAssign = () => {
     setIsAssigning(true);
 
     try {
-      const response = await fetch("https://vpfinance2.onrender.com/api/telecaller/assign-suspects", {
+      const response = await fetch("http://localhost:8080/api/telecaller/assign-suspects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

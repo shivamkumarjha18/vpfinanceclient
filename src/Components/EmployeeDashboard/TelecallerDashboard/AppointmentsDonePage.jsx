@@ -1,24 +1,72 @@
-import React from "react";
-import { useSelector } from "react-redux";
+
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import LeadsTableLayout from "./LeadsTableLayout";
+import { setappointmentdoneCount } from "../../../redux/feature/showdashboarddata/dashboarddataSlice";
 
 const AppointmentsDonePage = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { suspects = [] } = useSelector((state) => state.suspect);
+  const user = JSON.parse(localStorage.getItem("user"));
+  const telecallerId = user?.id || null;
 
-  // Filter for appointments done (adjust according to your backend data)
+  let adcnt = 0;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+
   const data = suspects
-    .filter((s) => s.status === "appointment")
-    .map((s, i) => ({
-      sn: i + 1,
-      taskDate: new Date(s.createdAt).toLocaleDateString(),
-      suspectName: s.personalDetails?.name,
-      organisation: s.personalDetails?.organisation,
-      area: s.personalDetails?.city,
-      mobile: s.personalDetails?.contactNo,
-      purpose: "-portfolio",
-      status: s.callSummary?.status || "-",
-      remark: s.callSummary?.remark || "-",
-    }));
+    .filter((suspect) => {
+      if (suspect.assignedTo?.toString() !== telecallerId || !suspect.callTasks?.length) return false;
+
+      const lastTask = suspect.callTasks.slice(-1)[0];
+      if (lastTask.taskStatus !== "Appointment Done") return false;
+
+      const appointmentCreated = lastTask.createdAt ? new Date(lastTask.createdAt) : null;
+      if (!appointmentCreated) return false;
+
+
+        if (!(appointmentCreated >= today && appointmentCreated< tomorrow)) return false;
+
+   
+
+      return true;
+    })
+    .map((s, i) => {
+      const lastTask = s.callTasks.slice(-1)[0];
+      adcnt++;
+
+      return {
+        sn: i + 1,
+        taskDate: new Date(lastTask.taskDate).toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      }).replace(/\//g, "/"),
+        suspectName: (
+          <span
+            style={{ cursor: "pointer", color: "#007bff" }}
+            onClick={() => navigate(`/telecaller/suspect/edit/${s._id}`)}
+          >
+            {s.personalDetails?.groupName || "-"}
+          </span>
+        ),
+        organisation: s.personalDetails?.organisation || "-",
+        area: s.personalDetails?.city || "-",
+        mobile: s.personalDetails?.contactNo || "-",
+        purpose: "-portfolio",
+        status: lastTask.taskStatus,
+        remark: lastTask.taskRemarks || "-",
+      };
+    });
+
+  useEffect(() => {
+    dispatch(setappointmentdoneCount(adcnt));
+  }, [adcnt, dispatch]);
 
   const columns = [
     { header: "S.N", key: "sn" },
@@ -32,13 +80,7 @@ const AppointmentsDonePage = () => {
     { header: "Remark", key: "remark" },
   ];
 
-  return (
-    <LeadsTableLayout
-      title="Appointments Done"
-      data={data}
-      columns={columns}
-    />
-  );
+  return <LeadsTableLayout title="Appointments Done (Today)" data={data} columns={columns} />;
 };
 
 export default AppointmentsDonePage;

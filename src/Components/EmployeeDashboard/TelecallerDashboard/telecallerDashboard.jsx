@@ -22,10 +22,10 @@ const TelecallerPanel = () => {
       hasDropdown: true,
        path: "/telecaller", // 🟢 parent click navigate karega
       subItems: [
-        { name: "Busy On Another Call", count: 0, icon: "📞", path: "/telecaller/busy-on-another-call" },
-        { name: "Call After Some Time", count: 2, icon: "⏰", path: "/telecaller/call-after-some-time" },
-        { name: "Call Not Picked", count: 0, icon: "📵", path: "/telecaller/call-not-picked" },
-        { name: "Others", count: 0, icon: "📋", path: "/telecaller/others" },
+        { name: "Busy On Another Call",  icon: "📞", path: "/telecaller/busy-on-another-call" },
+        { name: "Call After Some Time",  icon: "⏰", path: "/telecaller/call-after-some-time" },
+        { name: "Call Not Picked",  icon: "📵", path: "/telecaller/call-not-picked" },
+        { name: "Others",  icon: "📋", path: "/telecaller/others" },
       ],
     },
     {
@@ -34,9 +34,9 @@ const TelecallerPanel = () => {
       hasDropdown: true,
     
       subItems: [
-        { name: "Wrong Number", count: 0, icon: "📱", path: "/telecaller/wrong-number" },
-        { name: "Not Reachable", count: 3, icon: "🚫", path: "/telecaller/not-reachable" },
-        { name: "Not Interested", count: 46, icon: "👎", path: "/telecaller/not-interested" },
+        { name: "Wrong Number",  icon: "📱", path: "/telecaller/wrong-number" },
+        { name: "Not Reachable", icon: "🚫", path: "/telecaller/not-reachable" },
+        { name: "Not Interested",  icon: "👎", path: "/telecaller/not-interested" },
       ],
     },
   ];

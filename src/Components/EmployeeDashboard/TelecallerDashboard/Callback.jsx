@@ -1,36 +1,27 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React from 'react'
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import LeadsTableLayout from "./LeadsTableLayout";
-import { setforwardedleadCount } from "../../../redux/feature/showdashboarddata/dashboarddataSlice";
-
-const ForwardedLeadsPage = () => {
-  const dispatch = useDispatch();
+function Callback() {
+const { suspects = [] } = useSelector((state) => state.suspect);
   const navigate = useNavigate();
-  const { suspects = [] } = useSelector((state) => state.suspect);
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user")); // object milega
   const telecallerId = user?.id || null;
 
   let rlcnt = 0;
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const tomorrow = new Date(today);
-  tomorrow.setDate(today.getDate() + 1);
-
+  // Filter for "Call Not Picked" whose latest task is NOT forwarded after
   const data = suspects
     .filter((suspect) => {
       if (suspect.assignedTo?.toString() !== telecallerId || !suspect.callTasks?.length) return false;
 
-      const lastTask = suspect.callTasks.slice(-1)[0];
-      const created = lastTask.createdAt ? new Date(lastTask.createdAt) : null;
-      if (!created) return false;
+      const lastTask = suspect.callTasks.slice(-1)[0]; // latest task
+      if (!lastTask) return false;
 
-      if (!["Call Not Picked", "Busy on Another Call", "Call After Sometimes","Others"].includes(lastTask.taskStatus)) return false;
-      if (!(created >= today && created < tomorrow)) return false;
+      // Latest task must be "Call Not Picked"
+      if (lastTask.taskStatus !== "Callback") return false;
 
-      // const forwardTime = suspect.leadInfo?.createdAt ? new Date(suspect.leadInfo.createdAt) : null;
-      // if (forwardTime && forwardTime > created) return false;
+ 
 
       return true;
     })
@@ -61,10 +52,6 @@ const ForwardedLeadsPage = () => {
       };
     });
 
-  useEffect(() => {
-    dispatch( setforwardedleadCount(rlcnt));
-  }, [rlcnt, dispatch]);
-
   const columns = [
     { header: "S.N", key: "sn" },
     { header: "Task Date", key: "taskDate" },
@@ -76,7 +63,7 @@ const ForwardedLeadsPage = () => {
     { header: "Calling Status", key: "status" },
   ];
 
-  return <LeadsTableLayout title="Forwarded Leads (Today)" data={data} columns={columns} />;
-};
+  return <LeadsTableLayout title="Call Back" data={data} columns={columns} />;
+}
 
-export default ForwardedLeadsPage;
+export default Callback

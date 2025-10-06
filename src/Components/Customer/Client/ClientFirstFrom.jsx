@@ -34,11 +34,17 @@ const ClientFirstFrom = () => {
 
 const { tabs } = useParams();
 
-useEffect(()=>{
-  if (tabs == "proposed") {
-    setActiveTab("proposed")
+// useEffect(()=>{
+//   if (tabs == "proposed") {
+//     setActiveTab("proposed")
+//   }
+// },[])
+
+useEffect(() => {
+  if (tabs === "proposed") {
+    setActiveTab("proposed");
   }
-},[])
+}, [tabs]); // tabs pe dependency daalo
 
   useEffect(() => {
     dispatch(getAllOccupationTypes());
@@ -64,9 +70,12 @@ useEffect(()=>{
     // setActiveTab("family")
   };
 
-  const changeTab=(tabChange)=>{
-setActiveTab(changeTab)
-  }
+//   const changeTab=(tabChange)=>{
+// setActiveTab(changeTab)
+//   }
+const changeTab = (tabChange) => {
+  setActiveTab(tabChange); // yeh correct hai
+};
 
   return (
     <div className="container py-5">

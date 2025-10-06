@@ -105,7 +105,7 @@ const FinancialInformationFormForProspect = ({ clientId, clientData, onClientCre
     const fetchClientData = async () => {
       try {
         if (!clientId) return;
-        const response = await fetch(`https://vpfinance2.onrender.com/api/client/${clientId}`, {
+        const response = await fetch(`http://localhost:8080/api/client/${clientId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

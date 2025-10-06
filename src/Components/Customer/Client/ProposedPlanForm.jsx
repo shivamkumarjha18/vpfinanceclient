@@ -41,7 +41,7 @@ const ProposedPlanForm = ({ clientId, clientData }) => {
     const fetchClientData = async () => {
       try {
         const response = await fetch(
-          `https://vpfinance2.onrender.com/api/client/${clientId}`
+          `http://localhost:8080/api/client/${clientId}`
         );
         const result = await response.json();
         if (result.success) {

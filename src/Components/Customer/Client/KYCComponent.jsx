@@ -361,33 +361,6 @@ const KYCComponent = ({ id, familyMembers }) => {
           ))}
         </tbody>
       </Table>
-
-      {/* Image Preview Modal */}
-      {/* <Modal show={showPreviewModal} onHide={() => setShowPreviewModal(false)} centered size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Document Preview</Modal.Title>
-        </Modal.Header>
-        <Modal.Body className="text-center">
-          {activeImage && (
-            <div>
-              <Image
-                src={activeImage}
-                alt="Preview"
-                fluid
-                style={{ maxHeight: "80vh", objectFit: "contain" }}
-              />
-              <div className="mt-3">
-                <Button
-                  variant="primary"
-                  onClick={() => downloadImage(activeImage, 'document')}
-                >
-                  Download Document
-                </Button>
-              </div>
-            </div>
-          )}
-        </Modal.Body>
-      </Modal> */}
       <Modal show={showPreviewModal} onHide={() => setShowPreviewModal(false)} centered size="lg">
   <Modal.Header closeButton>
     <Modal.Title>Document Preview</Modal.Title>
